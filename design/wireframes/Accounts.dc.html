@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hydra accounts, recurring and connections</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="hydra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="app">
+  <dc-import name="Sidebar" active="Accounts" hint-size="232px,1080px"></dc-import>
+  <div class="main">
+    <div class="top">
+      <h1 class="h1">Accounts</h1>
+      <span class="pill">Sample data</span>
+      <div class="sp"></div>
+      <span class="hint">Last sync 2 h ago</span>
+      <button class="btn">Sync now</button>
+      <button class="btn p">+ Add account</button>
+    </div>
+    <div class="tabs" role="tablist">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button role="tab" class="{{t.cls}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+    </div>
+
+    <sc-if value="{{isAccounts}}" hint-placeholder-val="{{true}}">
+      <div class="g g12" style="flex: 1; min-height: 0">
+        <div class="s8 col" style="gap: 16px">
+          <section class="card">
+            <div class="row"><span class="lbl">Cash</span><div class="sp"></div><span class="num s">$31,840.12</span></div>
+            <div>
+              <div class="li"><span class="ic">CH</span><span style="flex: 1">Chase Checking ··4471<span class="hint" style="display: block">Synced 2 h ago</span></span><span class="pill t">Healthy</span><span class="tn" style="width: 110px; text-align: right">$9,420.55</span></div>
+              <div class="li"><span class="ic">SV</span><span style="flex: 1">Chase Savings ··9020<span class="hint" style="display: block">Synced 2 h ago</span></span><span class="pill t">Healthy</span><span class="tn" style="width: 110px; text-align: right">$22,419.57</span></div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="row"><span class="lbl">Credit cards</span><div class="sp"></div><span class="num s neg">-$2,318.72</span></div>
+            <div>
+              <div class="li"><span class="ic">AX</span><span style="flex: 1">Amex Gold ··1008<span class="hint" style="display: block">Statement $1,604.10 · due Nov 27</span></span><div class="bar" style="width: 120px"><i style="width: 16%"></i></div><span class="hint tn">16% used</span><span class="pill w">Reconnect</span><span class="tn" style="width: 110px; text-align: right">$1,604.10</span></div>
+              <div class="li"><span class="ic">CS</span><span style="flex: 1">Chase Sapphire ··3316<span class="hint" style="display: block">Statement $640.00 · due Dec 8</span></span><div class="bar" style="width: 120px"><i style="width: 7%"></i></div><span class="hint tn">7% used</span><span class="pill t">Healthy</span><span class="tn" style="width: 110px; text-align: right">$714.62</span></div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="row"><span class="lbl">Manual assets</span><div class="sp"></div><span class="num s">$18,691.00</span></div>
+            <div>
+              <div class="li"><span class="ic">CA</span><span style="flex: 1">Car<span class="hint" style="display: block">You typed this value · updated Oct 1</span></span><button class="btn g">Edit</button><span class="tn" style="width: 110px; text-align: right">$17,500.00</span></div>
+              <div class="li"><span class="ic">OW</span><span style="flex: 1">Canvasly owes you<span class="hint" style="display: block">From UGC Tracker, updates by itself</span></span><span class="tn" style="width: 110px; text-align: right">$1,191.00</span></div>
+            </div>
+          </section>
+          <div class="wf">Click an account to see its balance history and transactions. "Reconnect" opens the bank's login again; it does not use a new login slot. Hide an account from net worth with a switch on its page.</div>
+        </div>
+        <section class="card s4">
+          <span class="lbl">Add an account</span>
+          <button class="card" style="text-align: left; gap: 4px; padding: 14px"><span style="font-weight: 600">Connect a bank or card</span><span class="hint">Secure bank login through Plaid. Balances and transactions update daily.</span><span class="pill t" style="align-self: flex-start">2 of 10 lifetime logins used</span></button>
+          <button class="card" style="text-align: left; gap: 4px; padding: 14px"><span style="font-weight: 600">Import a file</span><span class="hint">CSV, OFX or QFX from your bank. Hydra skips rows it already has.</span></button>
+          <button class="card" style="text-align: left; gap: 4px; padding: 14px"><span style="font-weight: 600">Add a manual account</span><span class="hint">Cash, a car, money someone owes you. You type the value.</span></button>
+          <div class="wf">Hydra never sees your bank password. The bank login token is stored encrypted. Hydra can read balances and transactions only. It cannot move money.</div>
+        </section>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isRecurring}}" hint-placeholder-val="{{false}}">
+      <section class="card" style="flex: 1; min-height: 0">
+        <div class="row"><span class="lbl">Recurring</span><span class="hint">$412.96 a month out · $1,450.00 rent · next 30 days: $1,862.96</span><div class="sp"></div><div class="seg"><button class="on">List</button><button>Calendar</button></div></div>
+        <div class="card" style="flex-direction: row; align-items: center; padding: 10px 14px; background: #F5F5F7; border-color: #D2D2D7"><span style="flex: 1">Found a new repeating charge: <b>Notion</b>, $10.00 on the 14th, 3 months in a row.</span><button class="btn">Not recurring</button><button class="btn p">Confirm</button></div>
+        <table>
+          <thead><tr><th>Name</th><th>Every</th><th>Next date</th><th>Category</th><th>Business</th><th class="r">Amount</th><th class="r">Per year</th></tr></thead>
+          <tbody>
+            <sc-for list="{{rec}}" as="r" hint-placeholder-count="8">
+              <tr><td style="font-weight: 500">{{r.name}}<span class="{{r.flagCls}}" style="margin-left: 8px">{{r.flag}}</span></td><td>{{r.every}}</td><td class="tn">{{r.next}}</td><td><span class="pill">{{r.cat}}</span></td><td><span class="{{r.bizCls}}">{{r.biz}}</span></td><td class="r tn">{{r.amt}}</td><td class="r tn muted">{{r.year}}</td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <div class="wf">Hydra finds repeating charges by itself (same name, steady amount, steady gap). You confirm or dismiss each one. A price change is flagged. Recurring dates also show on the Planning calendar.</div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isConn}}" hint-placeholder-val="{{false}}">
+      <div class="g" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
+        <section class="card"><div class="row"><span style="font-weight: 600; flex: 1">Bank feed</span><span class="pill t">Connected</span></div><span class="hint">Plaid. 2 logins, 4 accounts. Daily sync at 6 am. 1 login needs reconnect.</span><button class="btn" style="align-self: flex-start">Manage logins</button></section>
+        <section class="card"><div class="row"><span style="font-weight: 600; flex: 1">Grokbot connector</span><span class="pill t">Last push 2 h ago</span></div><span class="hint">Grokbot adds video links and updates views through this connector. It can write UGC posts and views only. It cannot read your finances.</span><div class="row"><input class="in tn" aria-label="Connector key" value="hyd_ugc_••••••••••3f9a" readonly style="flex: 1"><button class="btn">Copy</button><button class="btn">New key</button></div></section>
+        <section class="card"><div class="row"><span style="font-weight: 600; flex: 1">Claude Code connector</span><span class="pill t">Connected</span></div><span class="hint">Read-only tools for income, spending, taxes and UGC. Lets you ask questions from Claude Code.</span><button class="btn" style="align-self: flex-start">Copy setup command</button></section>
+        <section class="card"><div class="row"><span style="font-weight: 600; flex: 1">Google Calendar</span><span class="pill t">Two-way sync on</span></div><span class="hint">Tasks and events with a date go to the "Hydra" calendar. Edits there come back.</span><button class="btn" style="align-self: flex-start">Disconnect</button></section>
+        <section class="card"><div class="row"><span style="font-weight: 600; flex: 1">Security</span><span class="pill t">Passkey on</span></div><span class="hint">Login with Face ID or Touch ID. Stays signed in until sign-out. Idle lock off. One user only.</span><button class="btn" style="align-self: flex-start">Manage passkeys</button></section>
+        <section class="card"><div class="row"><span style="font-weight: 600; flex: 1">Backups</span><span class="pill t">Last backup 3 am</span></div><span class="hint">Encrypted copy of the database every night. 30 days kept.</span><button class="btn" style="align-self: flex-start">Download latest</button></section>
+      </div>
+      <div class="wf">Every connection shows its health here. A failed sync, a missed Grokbot push or a failed backup shows a warning on the dashboard too.</div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const tab = (this.state && this.state.tab) || 'Accounts';
+    const tabs = ['Accounts', 'Recurring', 'Connections'].map((label) => ({ label, cls: label === tab ? 'on' : '', pick: () => this.setState({ tab: label }) }));
+    const rec = [
+      ['Rent', 'Month', 'Dec 1', 'Housing', 'Personal', 1450, ''],
+      ['Adobe Creative Cloud', 'Month', 'Dec 20', 'Software', 'UGC', 59.99, 'Price up $5'],
+      ['Adobe Stock', 'Month', 'Dec 18', 'Software', 'UGC', 29.99, ''],
+      ['CapCut Pro', 'Month', 'Dec 19', 'Software', 'UGC', 9.99, ''],
+      ['Phone plan', 'Month', 'Dec 3', 'Utilities', 'Personal', 65, ''],
+      ['Gym', 'Month', 'Dec 5', 'Health', 'Personal', 49, ''],
+      ['Claude', 'Month', 'Dec 11', 'Software', 'UGC', 100, ''],
+      ['Car insurance', '6 months', 'Feb 2', 'Transport', 'Personal', 594, '']
+    ].map(([name, every, next, cat, biz, amt, flag]) => ({ name, every, next, cat, biz, flag, flagCls: flag ? 'pill w' : '', bizCls: 'pill' + (biz === 'UGC' ? ' t' : ''),
+      amt: '$' + amt.toFixed(2), year: '$' + (amt * (every === 'Month' ? 12 : 2)).toLocaleString('en-US', { minimumFractionDigits: 2 }) }));
+    return { tabs, isAccounts: tab === 'Accounts', isRecurring: tab === 'Recurring', isConn: tab === 'Connections', rec };
+  }
+}
+</script>
+</body>
+</html>

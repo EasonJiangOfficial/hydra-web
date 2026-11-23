@@ -1,0 +1,209 @@
+/* The Notes editor (BlockNote) on Hydra's tokens (src/styles/theme.css): the system sans, off-black and
+   grays, hairlines, small corners, no accent color. BlockNote's menus portal inside .bn-root, so they
+   take these too. Only the Notes page uses BlockNote. */
+
+.bn-root {
+  --bn-font-family: var(--font-system);
+  --bn-colors-editor-text: var(--ink);
+  --bn-colors-editor-background: var(--surface);
+  --bn-colors-menu-text: var(--ink);
+  --bn-colors-menu-background: var(--surface);
+  --bn-colors-tooltip-text: #ffffff;
+  --bn-colors-tooltip-background: var(--ink);
+  --bn-colors-hovered-text: var(--ink);
+  --bn-colors-hovered-background: var(--tint);
+  --bn-colors-selected-text: #ffffff;
+  --bn-colors-selected-background: var(--ink);
+  --bn-colors-disabled-text: var(--ink-3);
+  --bn-colors-disabled-background: var(--tint);
+  --bn-colors-shadow: transparent;
+  --bn-colors-border: var(--rule);
+  --bn-colors-side-menu: var(--ink-3);
+  --bn-border-radius-small: 4px;
+  --bn-border-radius-medium: 6px;
+  --bn-border-radius-large: 8px;
+  letter-spacing: -0.016em;
+}
+
+.bn-root .bn-default-styles {
+  font-family: var(--font-system);
+}
+
+.hy-notes-editor .bn-editor {
+  font-size: 15px;
+  line-height: 1.5;
+  padding-inline: 48px 24px;
+}
+/* The phone has no hover and no room for the drag handle: it is hidden, and the text takes the page's 16 px
+   gutter on both sides, under the back button's chevron and the title. */
+@media (max-width: 767px) {
+  .hy-notes-editor .bn-editor {
+    padding-inline: 0;
+  }
+  .bn-root .bn-side-menu {
+    display: none;
+  }
+  /* Slash menu rows are 32 px touch targets (the row, not the icon and title inside it, which share its class). */
+  .bn-root .bn-suggestion-menu-item:has(> .bn-suggestion-menu-item) {
+    min-height: 32px;
+  }
+}
+
+/* Placeholders (Heading, List) are upright, in the type scale. */
+.hy-notes-editor .bn-block-content:has(.ProseMirror-trailingBreak:only-child):after {
+  font-style: normal;
+}
+
+/* The table's left handle room is pulled back, so its border lines up with the text. */
+.hy-notes-editor [data-content-type="table"] .tableWrapper {
+  margin-left: calc(-1 * var(--bn-table-handle-size));
+}
+
+/* The formatting toolbar never runs past a narrow window. */
+.bn-root .bn-formatting-toolbar {
+  max-width: calc(100vw - 32px);
+  overflow-x: auto;
+}
+
+/* Headings follow the type scale: 26, 20 and 16 px, weight 500 (level 1 carries no data-level). */
+.hy-notes-editor [data-content-type="heading"] {
+  --level: 1.733em;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.hy-notes-editor [data-content-type="heading"][data-level="2"] {
+  --level: 1.333em;
+}
+.hy-notes-editor [data-content-type="heading"][data-level="3"] {
+  --level: 1.067em;
+}
+/* On the phone the title is 26 px: headings step down to 20, 16 and 15 px under it. */
+@media (max-width: 767px) {
+  .hy-notes-editor [data-content-type="heading"] {
+    --level: 1.333em;
+  }
+  .hy-notes-editor [data-content-type="heading"][data-level="2"] {
+    --level: 1.067em;
+  }
+  .hy-notes-editor [data-content-type="heading"][data-level="3"] {
+    --level: 1em;
+  }
+}
+
+/* Links are ink, underlined in rule gray: no blue. */
+.hy-notes-editor .bn-editor a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-2);
+  text-underline-offset: 2px;
+}
+
+.hy-notes-editor [data-content-type="quote"] blockquote {
+  color: var(--ink-2);
+  border-left-color: var(--rule-2);
+}
+
+/* Code is a tint block, like a nested card, in ink. */
+.hy-notes-editor .bn-block-content[data-content-type="codeBlock"] {
+  color: var(--ink);
+  background-color: var(--tint);
+}
+.hy-notes-editor .bn-block-content[data-content-type="codeBlock"] > pre {
+  --bn-suggestion-surface: var(--tint);
+  padding: 16px 20px;
+  font-size: 13px;
+}
+.hy-notes-editor .bn-block-content[data-content-type="codeBlock"] > div > select {
+  color: var(--ink-3);
+}
+
+.hy-notes-editor [data-content-type="divider"] hr,
+.hy-notes-editor .bn-block-content[data-content-type="divider"] > * {
+  border-color: var(--rule);
+}
+
+/* Selected blocks and drop targets: gray, not blue. */
+.hy-notes-editor .bn-block-content.ProseMirror-selectednode > :after,
+.hy-notes-editor .ProseMirror-selectednode > .bn-block-content > :after,
+.hy-notes-editor .bn-block-content .ProseMirror-selectednode:after,
+.hy-notes-editor .bn-block-outer[data-drop-target="true"]:after {
+  background-color: rgb(29 29 31 / 0.04);
+  box-shadow: inset 0 0 0 1px var(--rule-2);
+}
+.hy-notes-editor .bn-editor ::selection {
+  background: rgb(29 29 31 / 0.14);
+}
+.bn-root .ProseMirror-dropcursor {
+  background-color: var(--ink-3) !important;
+}
+
+/* To-do boxes: a 16 px box in ink, with a 32 px hit area (the transparent border) that does not move the line.
+   The box takes 24 px of the line, like a bullet, so to-do text starts where list text does; it sits on the
+   first line's middle. */
+.hy-notes-editor [data-content-type="checkListItem"] input[type="checkbox"] {
+  appearance: none;
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  margin: -6px 0 -10px -8px;
+  border: 8px solid transparent;
+  border-radius: 12px;
+  background: var(--surface) padding-box;
+  box-shadow: inset 0 0 0 1.5px var(--ink-3);
+  cursor: pointer;
+}
+.hy-notes-editor [data-content-type="checkListItem"] input[type="checkbox"]:checked {
+  background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.2l2.6 2.6L12 5.4' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat padding-box;
+  box-shadow: none;
+}
+.hy-notes-editor [data-content-type="checkListItem"] input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -8px;
+}
+
+/* Toggles: a line chevron in ink-3 (BlockNote's solid triangle is hidden), 24 px in the line like a bullet,
+   with a 32 px hit area. The hover square stays in the 24 px slot, so it never covers the text. */
+.hy-notes-editor .bn-toggle-button {
+  position: relative;
+  z-index: 0;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  margin: -4px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+}
+.hy-notes-editor .bn-toggle-button:hover {
+  background-color: transparent;
+}
+.hy-notes-editor .bn-toggle-button::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  z-index: -1;
+  border-radius: var(--bn-border-radius-small);
+  transition: background-color 200ms ease-out;
+}
+.hy-notes-editor .bn-toggle-button:hover::after {
+  background-color: var(--bn-colors-hovered-background);
+}
+.hy-notes-editor .bn-toggle-button > svg {
+  display: none;
+}
+.hy-notes-editor .bn-toggle-button::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m9 18 6-6-6-6' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
+}
+
+/* Menus keep their hairline ring and lose the drop shadow (no shadows in Hydra). */
+.bn-root .shadow-xs,
+.bn-root .shadow-sm,
+.bn-root .shadow-md,
+.bn-root .shadow-lg {
+  --tw-shadow: 0 0 #0000;
+}

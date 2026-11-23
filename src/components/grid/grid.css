@@ -1,0 +1,64 @@
+/* Dashboard grid motion and placeholder (DESIGN.md section 7). Flat: no shadows, no gradients.
+   A block lifts on drag and settles with an ease, a resize snaps in 200 ms, nothing bounces.
+   Under prefers-reduced-motion the global rule in theme.css makes every transition instant. */
+
+.hy-grid {
+  position: relative;
+  transition: height var(--dur-state) var(--ease);
+}
+
+.hy-grid > .react-grid-item {
+  position: absolute;
+  transition:
+    transform var(--dur-state) var(--ease),
+    width var(--dur-state) var(--ease),
+    height var(--dur-state) var(--ease);
+}
+
+/* Follow the pointer exactly while it is down; the ease runs on release. */
+.hy-grid > .react-grid-item.resizing,
+.hy-grid > .react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 3;
+}
+
+/* The slot a dragged block will land in: a tint block, 12 px corners. */
+.hy-grid > .react-grid-item.react-grid-placeholder {
+  background: var(--tint);
+  border-radius: 12px;
+  opacity: 1;
+  z-index: 0;
+  user-select: none;
+}
+.hy-grid > .react-grid-item.react-grid-placeholder.placeholder-resizing {
+  transition: none;
+}
+
+/* The block fills its slot; the lift scales this layer, never the slot. */
+.hy-lift {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--dur-state) var(--ease);
+}
+.react-draggable-dragging > .hy-lift {
+  transform: scale(1.012);
+}
+@media (prefers-reduced-motion: reduce) {
+  .react-draggable-dragging > .hy-lift {
+    transform: none;
+  }
+}
+
+.hy-cell {
+  height: 100%;
+  overflow: hidden;
+}
+.hy-cell > * {
+  height: 100%;
+}
+
+/* A finger on a handle moves the block; a finger anywhere else still scrolls the page. */
+.hy-handle,
+.hy-resize {
+  touch-action: none;
+}

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hydra transactions and rules</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="hydra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="app">
+  <dc-import name="Sidebar" active="Transactions" hint-size="232px,1080px"></dc-import>
+  <div class="main">
+    <div class="top">
+      <h1 class="h1">Transactions</h1>
+      <span class="pill">Sample data</span>
+      <div class="sp"></div>
+      <input class="in" aria-label="Search transactions" placeholder="Search name, amount or note" style="width: 260px">
+      <button class="btn">Account: All</button>
+      <button class="btn">Category: All</button>
+      <button class="btn">Business: All</button>
+      <button class="btn">Import CSV</button>
+      <button class="btn p">+ Add</button>
+    </div>
+    <div class="tabs" role="tablist">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2"><button role="tab" class="{{t.cls}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+    </div>
+
+    <sc-if value="{{isTx}}" hint-placeholder-val="{{true}}">
+      <sc-if value="{{offer}}" hint-placeholder-val="{{false}}">
+        <div class="card" style="flex-direction: row; align-items: center; padding: 12px 16px; background: #F5F5F7; border-color: #D2D2D7">
+          <span style="flex: 1">You set <b>Target</b> to <b>Shopping</b>. Always put names that contain "TARGET" in Shopping?</span>
+          <button class="btn" onClick="{{dismiss}}">Just this one</button>
+          <button class="btn p" onClick="{{goRules}}">Create rule</button>
+        </div>
+      </sc-if>
+      <section class="card" style="flex: 1; min-height: 0">
+        <div class="row"><span class="lbl">November 2026</span><span class="hint">{{reviewText}}</span><div class="sp"></div><button class="btn g">Select</button><button class="btn g">Export CSV</button></div>
+        <table>
+          <thead><tr><th>Date</th><th>Name</th><th>Account</th><th>Category</th><th>Business</th><th class="r">Amount</th></tr></thead>
+          <tbody>
+            <sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
+              <tr onClick="{{r.open}}" style="cursor: pointer"><td class="tn muted">{{r.date}}</td><td><span style="font-weight: 500">{{r.name}}</span><span class="hint" style="display: block">{{r.raw}}</span></td><td>{{r.acct}}</td><td><button class="{{r.catCls}}" style="border: 0" onClick="{{r.setCat}}">{{r.cat}}</button><span class="hint" style="margin-left: 8px">{{r.via}}</span></td><td><span class="{{r.bizCls}}">{{r.biz}}</span></td><td class="{{r.amtCls}}">{{r.amt}}</td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <div class="wf">Click a category pill to change it (try the "Needs review" row). Click a row to open details: split, note, receipt, tax line, mark as transfer. Card payments and transfers between your own accounts are matched and left out of income and spending.</div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isRules}}" hint-placeholder-val="{{false}}">
+      <div class="g g12" style="flex: 1; min-height: 0">
+        <section class="card s5">
+          <div class="row"><span class="lbl">Rules, checked top to bottom</span><div class="sp"></div><button class="btn">+ New rule</button></div>
+          <div>
+            <sc-for list="{{rules}}" as="u" hint-placeholder-count="6">
+              <div class="li"><span class="muted" aria-hidden="true">⋮⋮</span><span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 500">{{u.when}}</span><span class="hint">{{u.then}}</span></span><span class="hint tn">{{u.hits}}</span><span class="{{u.cls}}">{{u.state}}</span></div>
+            </sc-for>
+          </div>
+          <div class="wf">Drag to reorder. The first rule that matches wins. A rule you made by hand always beats an automatic guess.</div>
+        </section>
+        <section class="card s7">
+          <div class="row"><span class="lbl">Edit rule</span><div class="sp"></div><button class="btn">Delete</button><button class="btn p">Save rule</button></div>
+          <span class="hint">When a transaction matches ALL of these</span>
+          <div class="row">
+            <select class="in" aria-label="Field" style="width: 150px"><option>Name</option><option>Merchant</option><option>Amount</option><option>Account</option><option>Note</option></select>
+            <select class="in" aria-label="Match type" value="{{op}}" onChange="{{setOp}}" style="width: 170px"><option value="contains">contains</option><option value="equals">is exactly</option><option value="starts">starts with</option></select>
+            <input class="in" aria-label="Text to match" value="{{val}}" onChange="{{setVal}}" style="flex: 1">
+            <button class="btn g" aria-label="Remove condition">Remove</button>
+          </div>
+          <div class="row"><button class="btn">+ Add condition</button><span class="hint">More match types: contains any of, does not contain, is one of, amount is between, regular expression. Case is ignored.</span></div>
+          <span class="hint">Then do this</span>
+          <div class="g" style="grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <label class="col" style="gap: 4px"><span class="hint">Set category</span><select class="in"><option>Software</option><option>Shopping</option><option>Food</option><option>UGC income</option></select></label>
+            <label class="col" style="gap: 4px"><span class="hint">Set business</span><select class="in"><option>UGC</option><option>Personal</option></select></label>
+            <label class="col" style="gap: 4px"><span class="hint">Rename to</span><input class="in" value="Adobe"></label>
+            <label class="col" style="gap: 4px"><span class="hint">Tax line (Schedule C)</span><select class="in"><option>Line 18: Office expense</option><option>Line 8: Advertising</option><option>Line 27b: Other expenses</option><option>Not deductible</option></select></label>
+          </div>
+          <div class="row"><label class="row" style="gap: 8px"><input type="checkbox" checked> Also apply to past transactions</label><label class="row" style="gap: 8px"><input type="checkbox"> Mark as recurring</label><label class="row" style="gap: 8px"><input type="checkbox"> Hide from reports (transfer)</label></div>
+          <div class="row"><span class="lbl">Preview</span><span class="hint">{{previewText}}</span></div>
+          <div>
+            <sc-for list="{{preview}}" as="p" hint-placeholder-count="3"><div class="li"><span class="tn muted" style="width: 60px">{{p.date}}</span><span style="flex: 1">{{p.raw}}</span><span class="tn">{{p.amt}}</span></div></sc-for>
+          </div>
+          <div class="wf">Type in the match box: the preview updates as you type, before anything is saved.</div>
+        </section>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{drawerOpen}}" hint-placeholder-val="{{false}}">
+    <aside class="card drawer" aria-label="Transaction details">
+      <div class="row"><span class="lbl" style="flex: 1">Transaction</span><button class="btn g" onClick="{{closeDrawer}}">Close</button></div>
+      <span class="num">{{sel.amt}}</span>
+      <span style="font-size: 18px; font-weight: 600">{{sel.name}}</span>
+      <span class="tn muted">{{sel.raw}} · {{sel.date}} · {{sel.acct}}</span>
+      <div class="g" style="grid-template-columns: 110px 1fr; gap: 12px; align-items: center">
+        <span class="hint">Category</span><select class="in" aria-label="Category"><option>{{sel.cat}}</option><option>Shopping</option><option>Food</option><option>Software</option><option>Transport</option></select>
+        <span class="hint">Business</span><div><div class="seg" role="group" aria-label="Business"><button class="on">{{sel.biz}}</button><button>Other</button></div></div>
+        <span class="hint">Tax line</span><select class="in" aria-label="Tax line"><option>Not deductible</option><option>Line 18: Office expense</option><option>Line 22: Supplies</option></select>
+        <span class="hint">Rename</span><input class="in" aria-label="Rename" value="{{sel.name}}" readonly>
+        <span class="hint">Note</span><input class="in" aria-label="Note" placeholder="Add a note">
+      </div>
+      <div class="col" style="gap: 10px">
+        <label class="row" style="gap: 8px"><input type="checkbox"> Transfer between my accounts</label>
+        <label class="row" style="gap: 8px"><input type="checkbox"> Recurring</label>
+        <label class="row" style="gap: 8px"><input type="checkbox"> Hide from reports</label>
+      </div>
+      <div class="row" style="flex-wrap: wrap"><button class="btn">Split</button><button class="btn">Add receipt</button><button class="btn">Link to UGC deal</button></div>
+      <div class="sp"></div>
+      <button class="btn p" onClick="{{goRules}}">Make a rule from this</button>
+    </aside>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const tab = st.tab || 'Transactions';
+    const tabs = ['Transactions', 'Rules'].map((label) => ({ label, cls: label === tab ? 'on' : '', pick: () => this.setState({ tab: label }) }));
+    const fixed = !!st.fixed;
+    const data = [
+      ['Nov 21', 'Wordwise payout', 'ACH WORDWISE INC PAYOUT 8841', 'Checking', 'UGC income', 'UGC', 1420, 'rule'],
+      ['Nov 21', 'Target', 'TARGET 00021873 AUSTIN TX', 'Amex Gold', fixed ? 'Shopping' : 'Needs review', 'Personal', -84.12, fixed ? 'you' : ''],
+      ['Nov 20', 'Adobe', 'ADOBE *CREATIVE CLOUD', 'Sapphire', 'Software', 'UGC', -59.99, 'rule'],
+      ['Nov 20', 'Uber Eats', 'UBER *EATS PENDING', 'Amex Gold', 'Food', 'Personal', -27.4, 'rule'],
+      ['Nov 19', 'CapCut', 'CAPCUT PRO SUBSCRIPTION', 'Sapphire', 'Software', 'UGC', -9.99, 'rule'],
+      ['Nov 19', 'Card payment', 'AMEX EPAYMENT ACH PMT', 'Checking', 'Transfer', 'Personal', -1200, 'matched'],
+      ['Nov 18', 'Brightleaf payout', 'BRIGHTLEAF TECHNOLOGIES DEP', 'Checking', 'UGC income', 'UGC', 640, 'rule'],
+      ['Nov 18', 'Adobe', 'ADOBE *STOCK', 'Sapphire', 'Software', 'UGC', -29.99, 'rule'],
+      ['Nov 17', 'Shell', 'SHELL OIL 5744120', 'Amex Gold', 'Transport', 'Personal', -41.8, 'guess'],
+      ['Nov 16', 'Amazon', 'AMZN MKTP US*2K4', 'Amex Gold', 'Needs review', 'Personal', -36.2, '']
+    ];
+    const money = (n) => (n < 0 ? '-$' : '+$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2 });
+    const rows = data.map(([date, name, raw, acct, cat, biz, amt, via], i) => ({ open: () => this.setState({ sel: i }), date, name, raw, acct, cat, biz, amt: money(amt), via: via ? 'by ' + via : '',
+      catCls: 'pill' + (cat === 'Needs review' ? ' w' : ''), bizCls: 'pill' + (biz === 'UGC' ? ' t' : ''), amtCls: 'r tn' + (amt > 0 ? ' pos' : ''),
+      setCat: (e) => { e.stopPropagation(); if (name === 'Target') this.setState({ fixed: true, offer: true }); } }));
+    const needs = data.filter((d) => d[4] === 'Needs review').length;
+    const rules = [
+      ['Name contains "ADOBE"', 'Software · UGC · Line 18 Office expense', '14 matches', true],
+      ['Name contains "WORDWISE"', 'UGC income · UGC · link to deal Wordwise', '14 matches', true],
+      ['Name contains "BRIGHTLEAF"', 'UGC income · UGC · link to deal Brightleaf', '9 matches', true],
+      ['Name contains any of "UBER *EATS", "DOORDASH"', 'Food · Personal', '31 matches', true],
+      ['Name is exactly "AMEX EPAYMENT ACH PMT"', 'Transfer · hide from reports', '11 matches', true],
+      ['Name starts with "SQ *" and amount under $20', 'Coffee · Personal', '6 matches', false]
+    ].map(([when, then, hits, on]) => ({ when, then, hits, state: on ? 'On' : 'Off', cls: 'pill' + (on ? ' t' : '') }));
+    const op = st.op || 'contains', val = st.val === undefined ? 'ADOBE' : st.val;
+    const q = val.trim().toUpperCase();
+    const hit = (raw) => { const r = raw.toUpperCase(); if (!q) return false; return op === 'contains' ? r.includes(q) : op === 'equals' ? r === q : r.startsWith(q); };
+    const preview = data.filter((d) => hit(d[2])).map((d) => ({ date: d[0], raw: d[2], amt: money(d[6]) }));
+    return { tabs, isTx: tab === 'Transactions', isRules: tab === 'Rules', rows, rules, offer: !!st.offer,
+      drawerOpen: typeof st.sel === 'number', sel: rows[st.sel] || {}, closeDrawer: () => this.setState({ sel: null }),
+      reviewText: needs + ' need review · 10 shown', dismiss: () => this.setState({ offer: false }), goRules: () => this.setState({ offer: false, sel: null, tab: 'Rules', val: 'TARGET' }),
+      op, val, setOp: (e) => this.setState({ op: e.target.value }), setVal: (e) => this.setState({ val: e.target.value }),
+      preview, previewText: preview.length + ' of 10 sample transactions match' };
+  }
+}
+</script>
+</body>
+</html>

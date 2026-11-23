@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "../styles/theme.css";
+/* The Notes editor's shadcn menus (BlockNote) are Tailwind classes inside the package. */
+@source "../../node_modules/@blocknote/shadcn/dist";

@@ -1,0 +1,200 @@
+{
+  "accounts": [
+    {
+      "account_id": "BxBXxLj1m4HMXBm9WZZmCWVbPjX16EHwv99vp",
+      "balances": {
+        "available": 100,
+        "current": 110,
+        "iso_currency_code": "USD",
+        "limit": null,
+        "unofficial_currency_code": null
+      },
+      "mask": "0000",
+      "name": "Plaid Checking",
+      "official_name": "Plaid Gold Standard 0% Interest Checking",
+      "subtype": "checking",
+      "type": "depository",
+      "holder_category": "personal"
+    },
+    {
+      "account_id": "dVzbVMLjrxTnLjX4G66XUp5GLklm4oiZy88yK",
+      "balances": {
+        "available": null,
+        "current": 410,
+        "iso_currency_code": "USD",
+        "limit": 2000,
+        "unofficial_currency_code": null
+      },
+      "mask": "3333",
+      "name": "Plaid Credit Card",
+      "official_name": "Plaid Diamond 12.5% APR Interest Credit Card",
+      "subtype": "credit card",
+      "type": "credit",
+      "holder_category": "personal"
+    }
+  ],
+  "added": [
+    {
+      "account_id": "BxBXxLj1m4HMXBm9WZZmCWVbPjX16EHwv99vp",
+      "account_owner": null,
+      "amount": 4.73,
+      "iso_currency_code": "USD",
+      "unofficial_currency_code": null,
+      "check_number": null,
+      "counterparties": [],
+      "date": "2026-11-21",
+      "datetime": null,
+      "authorized_date": "2026-11-19",
+      "authorized_datetime": null,
+      "location": {
+        "address": null,
+        "city": null,
+        "region": null,
+        "postal_code": null,
+        "country": null,
+        "lat": null,
+        "lon": null,
+        "store_number": null
+      },
+      "name": "Starbucks",
+      "merchant_name": "Starbucks",
+      "merchant_entity_id": null,
+      "logo_url": null,
+      "website": null,
+      "original_description": "SQ *STARBUCKS #1234",
+      "payment_meta": {
+        "reference_number": null,
+        "ppd_id": null,
+        "payee": null,
+        "by_order_of": null,
+        "payer": null,
+        "payment_method": null,
+        "payment_processor": null,
+        "reason": null
+      },
+      "payment_channel": "in store",
+      "pending": false,
+      "pending_transaction_id": "no86Eox18VHMvaOVL7gPUM9ap3aR1LsAVZ5nc",
+      "personal_finance_category": {
+        "primary": "GENERAL_MERCHANDISE",
+        "detailed": "GENERAL_MERCHANDISE_OTHER_GENERAL_MERCHANDISE",
+        "confidence_level": "LOW"
+      },
+      "personal_finance_category_icon_url": "https://plaid-category-icons.plaid.com/PFC_GENERAL_MERCHANDISE.png",
+      "transaction_id": "4ZVlAeRy7MCe5nkoxDZaHZ1kO7r9DKiPZ7Yvp",
+      "transaction_code": null
+    },
+    {
+      "account_id": "dVzbVMLjrxTnLjX4G66XUp5GLklm4oiZy88yK",
+      "account_owner": null,
+      "amount": 89.4,
+      "iso_currency_code": "USD",
+      "unofficial_currency_code": null,
+      "check_number": null,
+      "counterparties": [],
+      "date": "2026-11-17",
+      "datetime": null,
+      "authorized_date": "2026-11-16",
+      "authorized_datetime": null,
+      "location": {
+        "address": null,
+        "city": null,
+        "region": null,
+        "postal_code": null,
+        "country": null,
+        "lat": null,
+        "lon": null,
+        "store_number": null
+      },
+      "name": "United Airlines",
+      "merchant_name": "United Airlines",
+      "merchant_entity_id": null,
+      "logo_url": null,
+      "website": null,
+      "original_description": null,
+      "payment_meta": {
+        "reference_number": null,
+        "ppd_id": null,
+        "payee": null,
+        "by_order_of": null,
+        "payer": null,
+        "payment_method": null,
+        "payment_processor": null,
+        "reason": null
+      },
+      "payment_channel": "online",
+      "pending": false,
+      "pending_transaction_id": null,
+      "personal_finance_category": {
+        "primary": "TRAVEL",
+        "detailed": "TRAVEL_FLIGHTS",
+        "confidence_level": "VERY_HIGH"
+      },
+      "personal_finance_category_icon_url": "https://plaid-category-icons.plaid.com/PFC_GENERAL_MERCHANDISE.png",
+      "transaction_id": "9ZVxAeRy7MCe5nkoxDZaHZ1kO7r9DKiPZ7Yvz",
+      "transaction_code": null
+    }
+  ],
+  "modified": [
+    {
+      "account_id": "BxBXxLj1m4HMXBm9WZZmCWVbPjX16EHwv99vp",
+      "account_owner": null,
+      "amount": -2500.01,
+      "iso_currency_code": "USD",
+      "unofficial_currency_code": null,
+      "check_number": null,
+      "counterparties": [],
+      "date": "2026-11-18",
+      "datetime": null,
+      "authorized_date": null,
+      "authorized_datetime": null,
+      "location": {
+        "address": null,
+        "city": null,
+        "region": null,
+        "postal_code": null,
+        "country": null,
+        "lat": null,
+        "lon": null,
+        "store_number": null
+      },
+      "name": "ACME CORP PAYROLL",
+      "merchant_name": null,
+      "merchant_entity_id": null,
+      "logo_url": null,
+      "website": null,
+      "original_description": "ACME CORP PAYROLL PPD ID: 1234567",
+      "payment_meta": {
+        "reference_number": null,
+        "ppd_id": null,
+        "payee": null,
+        "by_order_of": null,
+        "payer": null,
+        "payment_method": null,
+        "payment_processor": null,
+        "reason": null
+      },
+      "payment_channel": "other",
+      "pending": false,
+      "pending_transaction_id": null,
+      "personal_finance_category": {
+        "primary": "INCOME",
+        "detailed": "INCOME_WAGES",
+        "confidence_level": "VERY_HIGH"
+      },
+      "personal_finance_category_icon_url": "https://plaid-category-icons.plaid.com/PFC_GENERAL_MERCHANDISE.png",
+      "transaction_id": "lPNjeW1nR6CDn5okmGQ6hEpMo4lLNoSrzqDje",
+      "transaction_code": null
+    }
+  ],
+  "removed": [
+    {
+      "account_id": "BxBXxLj1m4HMXBm9WZZmCWVbPjX16EHwv99vp",
+      "transaction_id": "no86Eox18VHMvaOVL7gPUM9ap3aR1LsAVZ5nc"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": "tVUUL15lYQN5rBnfDIc1I8xudpGdIlw9nsgeXWvhOfkECvUeR663i3Dt1uf/94S8ASkitgLcIiOSqNwzzp+bh89kirazha5vuZHBb2ZA5NtCDkkW",
+  "request_id": "Wvhy9aB3cD4eF5gH6",
+  "transactions_update_status": "HISTORICAL_UPDATE_COMPLETE"
+}

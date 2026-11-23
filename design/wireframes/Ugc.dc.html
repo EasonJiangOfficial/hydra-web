@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hydra UGC tracker</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="hydra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="app">
+  <dc-import name="Sidebar" active="UGC Tracker" hint-size="232px,1080px"></dc-import>
+  <div class="main">
+    <div class="top">
+      <h1 class="h1">UGC Tracker</h1>
+      <span class="pill">Sample data</span>
+      <div class="sp"></div>
+      <label class="hint" for="dealf">Deal</label>
+      <select id="dealf" class="in"><option>All deals</option><option>Wordwise</option><option>Brightleaf</option><option>Canvasly</option></select>
+      <button class="btn">‹ November 2026 ›</button>
+      <button class="btn">+ Add video</button>
+      <button class="btn p">+ New deal</button>
+    </div>
+    <div class="tabs" role="tablist">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button role="tab" class="{{t.cls}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+    </div>
+
+    <sc-if value="{{isOverview}}" hint-placeholder-val="{{true}}">
+      <div class="strip" style="grid-template-columns: repeat(5, minmax(0, 1fr))">
+        <section class="card"><span class="lbl">Earned this month</span><span class="num s">{{earned}}</span><span class="hint">From views and pay rules</span></section>
+        <section class="card"><span class="lbl">Paid by brands</span><span class="num s">$2,680.00</span><span class="hint">Matched bank deposits</span></section>
+        <section class="card"><span class="lbl">Owed to you</span><span class="num s">$1,260.00</span><span class="hint">1 payout past due</span></section>
+        <section class="card"><span class="lbl">Missed money</span><span class="num s neg">{{missed}}</span><span class="hint">Days under target x base pay</span></section>
+        <section class="card"><span class="lbl">Projected, 30 days</span><span class="num s">{{projected}}</span><span class="hint">Target x base pay x 30</span></section>
+      </div>
+      <div class="g g12" style="flex: 1; min-height: 0">
+        <section class="card s7">
+          <div class="row"><span class="lbl">Posting calendar</span><div class="sp"></div><span class="pill t">Streak 5 days</span><span class="pill">Hit target 16 of 21 days</span></div>
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px">
+            <sc-for list="{{dow}}" as="w" hint-placeholder-count="7"><div class="hint" style="text-align: center">{{w}}</div></sc-for>
+            <sc-for list="{{days}}" as="d" hint-placeholder-count="30">
+              <button aria-label="{{d.tip}}" data-tip="{{d.hover}}" onClick="{{d.pick}}" style="{{d.style}}"><span style="font-size: 12px; font-weight: 600">{{d.n}}</span><span aria-hidden="true" style="font-size: 8px; letter-spacing: 2px">{{d.dots}}</span></button>
+            </sc-for>
+          </div>
+          <div style="margin-top: 8px">
+            <div class="row" style="padding-bottom: 6px"><span class="lbl" style="flex: 1">{{dayTitle}}</span><span class="{{dayMoneyCls}}">{{dayMoney}}</span></div>
+            <sc-for list="{{dayVideos}}" as="v" hint-placeholder-count="3"><div class="li" style="border-top: 1px solid rgba(15,16,17,0.09)"><span style="flex: 1; min-width: 0">{{v.title}}</span><span class="pill">{{v.deal}}</span><span class="tn hint" style="width: 96px; text-align: right">{{v.views}}</span><span class="tn" style="width: 64px; text-align: right">{{v.pay}}</span></div></sc-for>
+          </div>
+        </section>
+        <div class="s5 col" style="gap: 16px; min-height: 0">
+          <section class="card">
+            <span class="lbl">Projection calculator</span>
+            <table>
+              <thead><tr><th>Deal</th><th class="r">Posts / day</th><th class="r">Base / video</th><th class="r">30 days</th></tr></thead>
+              <tbody>
+                <sc-for list="{{deals}}" as="d" hint-placeholder-count="3">
+                  <tr><td>{{d.name}}</td><td class="r"><input aria-label="{{d.aria}}" class="in tn" type="number" min="0" max="30" value="{{d.target}}" onChange="{{d.set}}" style="width: 64px; height: 30px; text-align: right"></td><td class="r tn">{{d.base}}</td><td class="r tn">{{d.proj}}</td></tr>
+                </sc-for>
+                <tr><td colspan="3" style="font-weight: 600; border-bottom: 0">Projected income</td><td class="r tn" style="font-weight: 600; border-bottom: 0">{{projected}}</td></tr>
+              </tbody>
+            </table>
+            <div class="wf">Posts per day x base pay x 30. Bonuses and CPM are not in the projection.</div>
+          </section>
+          <section class="card" style="flex: 1; min-height: 0">
+            <span class="lbl">Earned per day</span>
+            <div style="display: flex; align-items: flex-end; gap: 4px; height: 120px">
+              <sc-for list="{{bars}}" as="b" hint-placeholder-count="21"><div data-tip="{{b.tip}}" style="{{b.style}}"></div></sc-for>
+            </div>
+            <div class="row hint"><span>Nov 1</span><div class="sp"></div><span>Nov 21</span></div>
+          </section>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isVideos}}" hint-placeholder-val="{{false}}">
+      <section class="card" style="flex: 1; min-height: 0">
+        <div class="row"><span class="lbl">Videos</span><span class="hint">{{videoSummary}}</span><div class="sp"></div><input aria-label="Search videos" class="in" placeholder="Search title or link" style="width: 220px"><button class="btn">Export CSV</button></div>
+        <table>
+          <thead><tr><th>Video</th><th>Account</th><th>Deal</th><th>Posted</th><th class="r">Views</th><th class="r">Base</th><th class="r">CPM</th><th class="r">Bonus</th><th class="r">Total</th><th>Pay</th></tr></thead>
+          <tbody>
+            <sc-for list="{{videos}}" as="v" hint-placeholder-count="7">
+              <tr style="{{v.rowStyle}}"><td><a href="#" style="text-decoration: underline">{{v.title}}</a></td><td>{{v.acct}}</td><td><span class="pill">{{v.deal}}</span></td><td>{{v.date}}</td><td class="r tn">{{v.views}}</td><td class="r tn">{{v.base}}</td><td class="r tn">{{v.cpm}}</td><td class="r tn">{{v.bonus}}</td><td class="r tn" style="font-weight: 600">{{v.total}}</td><td><button class="{{v.btnCls}}" onClick="{{v.toggle}}" style="border: 0">{{v.btnLabel}}</button></td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <div class="wf">Grokbot adds each row through the Hydra connector (link, account, deal, post date) and updates views once a day. Click "Counted" to exclude a video from pay. Click a title to open the video. A view count that drops or jumps too far is flagged for review, not paid.</div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isDeals}}" hint-placeholder-val="{{false}}">
+      <div class="g g12" style="flex: 1; min-height: 0">
+        <section class="card s4">
+          <span class="lbl">Deals</span>
+          <div>
+            <div class="li"><span class="ic">PH</span><span style="flex: 1">Wordwise<span class="hint" style="display: block">$25 base + bonus tiers</span></span><span class="pill t">Active</span></div>
+            <div class="li"><span class="ic">TE</span><span style="flex: 1">Brightleaf<span class="hint" style="display: block">$40 base + $2 per 1,000 views</span></span><span class="pill t">Active</span></div>
+            <div class="li"><span class="ic">OA</span><span style="flex: 1">Canvasly<span class="hint" style="display: block">$35 base</span></span><span class="pill">Paused</span></div>
+          </div>
+        </section>
+        <section class="card s8">
+          <div class="row"><span class="lbl">Pay structure: Wordwise</span><div class="sp"></div><button class="btn">Archive</button><button class="btn p">Save</button></div>
+          <div class="g" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
+            <label class="col" style="gap: 4px"><span class="hint">Base pay per video</span><input class="in tn" value="$25.00"></label>
+            <label class="col" style="gap: 4px"><span class="hint">Minimum views for base pay</span><input class="in tn" value="0"></label>
+            <label class="col" style="gap: 4px"><span class="hint">Target posts per day</span><input class="in tn" value="2"></label>
+            <label class="col" style="gap: 4px"><span class="hint">CPM: pay per 1,000 views</span><input class="in tn" value="$0.00"></label>
+            <label class="col" style="gap: 4px"><span class="hint">CPM cap, views per video</span><input class="in tn" value="No cap"></label>
+            <label class="col" style="gap: 4px"><span class="hint">Views stop counting after</span><input class="in tn" value="14 days"></label>
+          </div>
+          <span class="lbl">View bonus tiers, per video</span>
+          <table>
+            <thead><tr><th>When one video passes</th><th class="r">Bonus</th><th></th></tr></thead>
+            <tbody>
+              <tr><td class="tn">100,000 views</td><td class="r tn">$100.00</td><td class="r"><button class="btn g">Remove</button></td></tr>
+              <tr><td class="tn">500,000 views</td><td class="r tn">$400.00</td><td class="r"><button class="btn g">Remove</button></td></tr>
+              <tr><td class="tn">1,000,000 views</td><td class="r tn">$1,000.00</td><td class="r"><button class="btn g">Remove</button></td></tr>
+            </tbody>
+          </table>
+          <div class="row"><button class="btn">+ Add tier</button><span class="hint">The highest tier a video passes is paid, not the sum.</span></div>
+          <span class="lbl">Payout matching</span>
+          <div class="g" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
+            <label class="col" style="gap: 4px"><span class="hint">Bank deposit name contains</span><input class="in" value="WORDWISE"></label>
+            <label class="col" style="gap: 4px"><span class="hint">Pays within</span><input class="in tn" value="30 days"></label>
+            <label class="col" style="gap: 4px"><span class="hint">Accounts on this deal</span><input class="in" value="@eason.ugc, @eason.tech"></label>
+          </div>
+          <div class="wf">A deposit that matches this rule is linked to the deal, so "Owed to you" goes down. Rate changes apply to new videos only. Old videos keep the rate they were posted under.</div>
+        </section>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const tab = st.tab || 'Overview';
+    const usd = (n) => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const tabs = ['Overview', 'Videos', 'Deals'].map((label) => ({ label, cls: label === tab ? 'on' : '', pick: () => this.setState({ tab: label }) }));
+    const targets = st.targets || { Wordwise: 2, Brightleaf: 1, Canvasly: 1 };
+    const baseBy = { Wordwise: 25, Brightleaf: 40, Canvasly: 35 };
+    const deals = Object.keys(baseBy).map((name) => ({ name, aria: 'Posts per day for ' + name, target: targets[name], base: usd(baseBy[name]), proj: usd(targets[name] * baseBy[name] * 30),
+      set: (e) => this.setState({ targets: { ...targets, [name]: Math.max(0, Math.min(30, Number(e.target.value) || 0)) } }) }));
+    const projectedN = Object.keys(baseBy).reduce((s, k) => s + targets[k] * baseBy[k] * 30, 0);
+    const counts = [3,3,2,0,3,4,3,1,3,3,0,2,3,3,3,3,2,3,0,3,3];
+    const target = 3, avgBase = 30;
+    let missedN = 0;
+    const sel = st.day || 21;
+    const days = [];
+    for (let i = 0; i < 30; i++) {
+      const future = i >= counts.length, c = counts[i] || 0;
+      const miss = future ? 0 : Math.max(0, target - c) * avgBase; missedN += miss;
+      let bg = '#F5F5F7', color = '#A1A1A6', border = '1px solid transparent';
+      if (!future) { if (c >= target) { bg = '#1D1D1F'; color = '#fff'; } else if (c > 0) { bg = '#D2D2D7'; color = '#1D1D1F'; } else { bg = '#fff'; border = '1px solid #86868B'; color = '#1D1D1F'; } }
+      if (i + 1 === sel) border = '2px solid #86868B';
+      days.push({ n: i + 1, dots: future ? '' : '●'.repeat(Math.min(c, target)) + '○'.repeat(Math.max(0, target - c)),
+        hover: 'Nov ' + (i + 1) + (future ? '\nUpcoming · target ' + target : '\n' + c + ' of ' + target + ' posted\n' + (miss ? '-$' + miss + ' missed' : '+$' + c * avgBase + ' earned')), count: future ? '' : c + '/' + target, money: future ? '' : (miss ? '-$' + miss : '+$' + c * avgBase), tip: 'November ' + (i + 1),
+        pick: () => this.setState({ day: i + 1 }),
+        style: 'height:62px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;font-family:inherit;background:' + bg + ';color:' + color + ';border:' + border });
+    }
+    const sc = counts[sel - 1];
+    const dayDetail = sc === undefined ? 'November ' + sel + ': upcoming. Target is ' + target + ' posts.'
+      : 'November ' + sel + ': posted ' + sc + ' of ' + target + '. ' + (sc >= target ? 'Target hit.' : 'Missed ' + (target - sc) + ' x $' + avgBase + ' = $' + (target - sc) * avgBase + ' left on the table.') + ' Click any day to see its videos.';
+    const bars = counts.map((c, i) => ({ tip: 'Nov ' + (i + 1) + ': $' + c * avgBase, style: 'flex:1;border-radius:3px 3px 0 0;background:' + (c >= target ? '#1D1D1F' : '#D2D2D7') + ';height:' + Math.max(3, c * 26) + 'px' }));
+    const cfg = { Wordwise: { base: 25, cpm: 0, tiers: [[100000, 100], [500000, 400]] }, Brightleaf: { base: 40, cpm: 2, tiers: [] }, Canvasly: { base: 35, cpm: 0, tiers: [] } };
+    const raw = [
+      ['3 apps for when you are bored', '@eason.ugc · TikTok', 'Wordwise', 'Nov 20', 184200],
+      ['Worst classes ranked', '@eason.ugc · TikTok', 'Wordwise', 'Nov 19', 612400],
+      ['After school procrastinator', '@eason.tech · Reels', 'Brightleaf', 'Nov 19', 48100],
+      ['Morning peak routine', '@eason.tech · Shorts', 'Brightleaf', 'Nov 18', 9300],
+      ['Watch this before finals', '@eason.ugc · TikTok', 'Wordwise', 'Nov 18', 22800],
+      ['Roblox walkthrough', '@eason.ugc · Reels', 'Canvasly', 'Nov 17', 71500],
+      ['GTA 6 apps', '@eason.ugc · TikTok', 'Wordwise', 'Nov 17', 3900]
+    ];
+    const excluded = st.excluded || { 6: true };
+    let counted = 0, nEx = 0;
+    const videos = raw.map(([title, acct, deal, date, views], i) => {
+      const c = cfg[deal], ex = !!excluded[i];
+      const cpm = Math.round(views / 1000 * c.cpm * 100) / 100;
+      let bonus = 0; c.tiers.forEach(([v, b]) => { if (views >= v) bonus = b; });
+      const total = ex ? 0 : c.base + cpm + bonus;
+      counted += total; if (ex) nEx++;
+      return { title, acct, deal, date, views: views.toLocaleString('en-US'), base: usd(c.base), cpm: usd(cpm), bonus: usd(bonus), total: usd(total),
+        rowStyle: ex ? 'opacity:.5' : '', btnCls: ex ? 'pill n' : 'pill t', btnLabel: ex ? 'Excluded' : 'Counted',
+        toggle: () => this.setState({ excluded: { ...excluded, [i]: !ex } }) };
+    });
+    const pool = [['3 apps for when you are bored', 'Wordwise', '184,200 views', '$125'], ['After school procrastinator', 'Brightleaf', '48,100 views', '$136'], ['Roblox walkthrough', 'Canvasly', '71,500 views', '$35'], ['Worst classes ranked', 'Wordwise', '612,400 views', '$425']];
+    const dayVideos = pool.slice(0, sc || 0).map(([title, deal, views, pay]) => ({ title, deal, views, pay }));
+    const dayTitle = 'Nov ' + sel + (sc === undefined ? ' · upcoming' : ' · ' + sc + ' of ' + target + ' posted');
+    const dayMiss = sc === undefined ? 0 : Math.max(0, target - sc) * avgBase;
+    const dayMoney = sc === undefined ? '' : dayMiss ? '-$' + dayMiss + ' missed' : 'Target hit';
+    return { dayVideos, dayTitle, dayMoney, dayMoneyCls: 'hint tn' + (dayMiss ? ' neg' : ''), tabs, isOverview: tab === 'Overview', isVideos: tab === 'Videos', isDeals: tab === 'Deals', deals, projected: usd(projectedN), missed: usd(-missedN), earned: usd(3940),
+      dow: ['S', 'M', 'T', 'W', 'T', 'F', 'S'], days, dayDetail, bars, videos, videoSummary: raw.length + ' videos · ' + usd(counted) + ' counted · ' + nEx + ' excluded' };
+  }
+}
+</script>
+</body>
+</html>

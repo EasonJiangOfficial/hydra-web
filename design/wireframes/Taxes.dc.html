@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hydra taxes and assistant</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="hydra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="app">
+  <dc-import name="Sidebar" active="Taxes" hint-size="232px,1080px"></dc-import>
+  <div class="main">
+    <div class="top">
+      <h1 class="h1">Taxes</h1>
+      <span class="pill">Sample data</span>
+      <div class="sp"></div>
+      <div class="seg" role="group" aria-label="Tax year"><button>2025</button><button class="on">2026</button></div>
+      <div class="seg" role="group" aria-label="Entity"><button class="on">UGC (sole proprietor)</button><button>LLC (closed)</button><button>Personal</button></div>
+      <button class="btn p">Download tax pack</button>
+    </div>
+    <div class="g g12" style="flex: 1; min-height: 0">
+      <div class="s8 col" style="gap: 16px; min-height: 0">
+        <div class="strip" style="grid-template-columns: repeat(4, minmax(0, 1fr))">
+          <section class="card"><span class="lbl">Business income</span><span class="num s">$45,155.00</span><span class="hint">3 payers, year to date</span></section>
+          <section class="card"><span class="lbl">Deductible expenses</span><span class="num s">$6,240.18</span><span class="hint">212 transactions</span></section>
+          <section class="card"><span class="lbl">Net profit</span><span class="num s">$38,914.82</span><span class="hint">Schedule C line 31</span></section>
+          <section class="card"><span class="lbl">Set aside at 25%</span><span class="num s">$9,728.71</span><span class="hint neg">Short by $1,328.71</span></section>
+        </div>
+        <section class="card">
+          <div class="row"><span class="lbl">Estimated tax payments</span><div class="sp"></div><label class="row hint" style="gap: 8px">Set-aside rate<input class="in tn" aria-label="Set-aside rate" value="25%" style="width: 64px; height: 30px"></label></div>
+          <div class="g" style="grid-template-columns: repeat(4, minmax(0, 1fr))">
+            <div class="col" style="gap: 4px"><span class="pill t" style="align-self: flex-start">Paid</span><span style="font-weight: 600">Q1 · Apr 15</span><span class="tn hint">$2,100.00</span></div>
+            <div class="col" style="gap: 4px"><span class="pill t" style="align-self: flex-start">Paid</span><span style="font-weight: 600">Q2 · Jun 15</span><span class="tn hint">$2,900.00</span></div>
+            <div class="col" style="gap: 4px"><span class="pill t" style="align-self: flex-start">Paid</span><span style="font-weight: 600">Q3 · Sep 15</span><span class="tn hint">$3,400.00</span></div>
+            <div class="col" style="gap: 4px"><span class="pill w" style="align-self: flex-start">Due in 55 days</span><span style="font-weight: 600">Q4 · Jan 15</span><span class="tn hint">$1,328.71 suggested</span></div>
+          </div>
+          <div class="wf">These are estimates from your own rate. Hydra does not file taxes and is not a tax adviser. Payments are found from your bank feed by rule ("IRS USATAXPYMT").</div>
+        </section>
+        <section class="card" style="flex: 1; min-height: 0">
+          <div class="row"><span class="lbl">Schedule C expenses</span><div class="sp"></div><button class="btn g">Edit category to tax-line map</button></div>
+          <table>
+            <thead><tr><th>Line</th><th>Name</th><th>From categories</th><th class="r">Transactions</th><th class="r">Amount</th></tr></thead>
+            <tbody>
+              <sc-for list="{{lines}}" as="l" hint-placeholder-count="7">
+                <tr><td class="tn muted">{{l.no}}</td><td style="font-weight: 500">{{l.name}}</td><td class="hint">{{l.cats}}</td><td class="r tn">{{l.n}}</td><td class="r tn">{{l.amt}}</td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <div class="row" style="flex-wrap: wrap; gap: 8px"><span class="lbl">Documents</span><span class="pill t">W-9 sent: Wordwise</span><span class="pill t">W-9 sent: Brightleaf</span><span class="pill w">W-9 missing: Canvasly</span><span class="pill">1099s arrive by Jan 31</span><button class="btn g" style="height: 26px">+ Upload document</button></div>
+          <div class="wf">Click a line to see every transaction in it. The tax pack is a PDF summary plus CSV files (income by payer, expenses by line, every transaction) you can hand to an accountant.</div>
+        </section>
+      </div>
+
+      <section class="card s4" aria-label="Ask Hydra" style="min-height: 0">
+        <div class="row"><span class="lbl">Ask Hydra</span><div class="sp"></div><span class="pill">Reads your data only</span></div>
+        <div class="col" style="flex: 1; gap: 12px; min-height: 0; overflow: hidden">
+          <div style="align-self: flex-end; max-width: 88%; background: #1D1D1F; color: #fff; padding: 10px 14px; border-radius: 8px 8px 2px 8px">{{q}}</div>
+          <div style="align-self: flex-start; max-width: 96%; background: #F5F5F7; padding: 12px 14px; border-radius: 8px 8px 8px 2px; display: flex; flex-direction: column; gap: 8px">
+            <span>{{a}}</span>
+            <span class="row" style="flex-wrap: wrap; gap: 6px"><sc-for list="{{srcs}}" as="s" hint-placeholder-count="2"><a href="Transactions.dc.html" class="pill t" style="text-decoration: underline">{{s}}</a></sc-for></span>
+            <span class="hint">Totals come from database queries, not from the model doing arithmetic.</span>
+          </div>
+        </div>
+        <div class="col" style="gap: 6px">
+          <span class="hint">Try one</span>
+          <sc-for list="{{chips}}" as="c" hint-placeholder-count="3"><button class="btn" style="justify-content: flex-start; height: auto; padding: 8px 12px; white-space: normal; text-align: left" onClick="{{c.pick}}">{{c.label}}</button></sc-for>
+        </div>
+        <div class="row"><input class="in" aria-label="Ask a question" placeholder="Ask about income, spending or taxes" style="flex: 1"><button class="btn p">Send</button></div>
+        <div class="wf">The same tools are in your Claude Code through the Hydra connector, so you can ask there too. Every answer links to the rows it used.</div>
+      </section>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const qa = [
+      ['How much did I spend on software for UGC this year?', 'You spent $1,284.40 on software for the UGC business in 2026, across 38 transactions. The largest are Adobe ($839.86) and CapCut ($119.88). This sits on Schedule C line 18.', ['38 transactions', 'Schedule C line 18', 'Rule: Name contains "ADOBE"']],
+      ['How much has Wordwise paid me, and what do they still owe?', 'Wordwise has paid you $28,460.00 in 2026 over 14 deposits. Your videos have earned $29,720.00 under the deal, so $1,260.00 is still owed. The oldest unpaid video is from Nov 3.', ['14 deposits', 'Deal: Wordwise', '52 videos']],
+      ['How much should I set aside for the January estimate?', 'At your 25% set-aside rate, net profit of $38,914.82 means $9,728.71 for the year. You have paid $8,400.00 in three estimates, so $1,328.71 is left for Jan 15. This is an estimate from your own rate, not tax advice.', ['Net profit report', '3 IRS payments', 'Setting: rate 25%']]
+    ];
+    const i = st.i || 0;
+    const lines = [
+      ['8', 'Advertising', 'Ads, promo', 6, '$412.00'],
+      ['11', 'Contract labor', 'Editors', 9, '$1,350.00'],
+      ['18', 'Office expense', 'Software, subscriptions', 38, '$1,284.40'],
+      ['22', 'Supplies', 'Props, gear under $2,500', 41, '$1,106.92'],
+      ['24a', 'Travel', 'Flights, hotels', 5, '$890.30'],
+      ['25', 'Utilities', 'Phone, internet share', 22, '$660.00'],
+      ['27b', 'Other expenses', 'Bank fees, misc', 91, '$536.56']
+    ].map(([no, name, cats, n, amt]) => ({ no, name, cats, n, amt }));
+    return { q: qa[i][0], a: qa[i][1], srcs: qa[i][2], lines, chips: qa.map(([label], k) => ({ label, pick: () => this.setState({ i: k }) })) };
+  }
+}
+</script>
+</body>
+</html>

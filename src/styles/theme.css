@@ -1,0 +1,246 @@
+/* Hydra design language, ported from design/wireframes/hydra.css (DESIGN.md section 7).
+   Monochrome, built from the logo. Off-black on white, hairline outlines, small corners,
+   no accent color. Red only for money lost or overdue. No shadows, no gradients.
+   Do not add colors or sizes per page: extend this file instead. */
+
+:root {
+  /* Surfaces and ink */
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --tint: #f5f5f7;
+  --hover: #f0f0f2;
+  --obsidian: #1d1d1f;
+  --ink: #1d1d1f;
+  --ink-2: #424245;
+  --ink-3: #6e6e73;
+  --ink-on-dark-3: #a1a1a6;
+  --rule: #e5e5ea;
+  --rule-2: #d2d2d7;
+  --neg: #b3261e;
+
+  /* Chart gray ramp: categories differ by lightness */
+  --ramp-1: #1d1d1f;
+  --ramp-2: #424245;
+  --ramp-3: #6e6e73;
+  --ramp-4: #a1a1a6;
+  --ramp-5: #d2d2d7;
+  --ramp-6: #e5e5ea;
+
+  /* Category slices (donut + legend): six grays, dark to light. The steps are widest at the dark end, where small
+     swatches are hardest to tell apart (L* 11, 24, 35, 44, 52, 59: steps 13 down to 7). Each is 3:1 or more on
+     white (WCAG 1.4.11; the lightest, #8e8e93, is 3.26:1) */
+  --slice-1: #1d1d1f;
+  --slice-2: #38383c;
+  --slice-3: #515155;
+  --slice-4: #68686c;
+  --slice-5: #7c7c80;
+  --slice-6: #8e8e93;
+
+  /* Sankey only (owner, 2026-11-21: "the sankey chart can have color") */
+  --sankey-savings: #3f5f8a;
+  --sankey-housing: #d9a441;
+  --sankey-taxes: #7b6bb0;
+  --sankey-food: #c96a4b;
+  --sankey-software: #5e8fc9;
+  --sankey-shopping: #c77a9b;
+  --sankey-other: #a1a1a6;
+  --sankey-transport: #8c6f4e;
+  --sankey-band-opacity: 0.32;
+
+  /* Type: the system sans. No web font. */
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Helvetica Neue", Inter, Arial, sans-serif;
+
+  /* Layout */
+  --sidebar-open: 232px;
+  --sidebar-closed: 64px;
+  --drawer-w: 420px;
+
+  /* Motion: restrained. 0.2 s ease on state, no springs, no overshoot. */
+  --ease: ease;
+  --dur-state: 200ms;
+  --dur-enter: 280ms;
+  --dur-exit: 180ms;
+  --dur-hover-card: 140ms;
+  --delay-hover-card: 80ms;
+  --dur-skeleton-fade: 150ms;
+
+  /* shadcn variables, mapped onto Hydra tokens so stock primitives render in this language */
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: #ffffff;
+  --secondary: var(--tint);
+  --secondary-foreground: var(--ink);
+  --muted: var(--tint);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--tint);
+  --accent-foreground: var(--ink);
+  --destructive: var(--neg);
+  --border: var(--rule);
+  --input: var(--rule-2);
+  --ring: var(--ink);
+  --chart-1: var(--ramp-1);
+  --chart-2: var(--ramp-2);
+  --chart-3: var(--ramp-3);
+  --chart-4: var(--ramp-4);
+  --chart-5: var(--ramp-5);
+  --radius: 8px;
+}
+
+@theme inline {
+  --font-sans: var(--font-system);
+  --font-heading: var(--font-system);
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-tint: var(--tint);
+  --color-hover: var(--hover);
+  --color-obsidian: var(--obsidian);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-on-dark-3: var(--ink-on-dark-3);
+  --color-rule: var(--rule);
+  --color-rule-2: var(--rule-2);
+  --color-neg: var(--neg);
+  --color-ramp-1: var(--ramp-1);
+  --color-ramp-2: var(--ramp-2);
+  --color-ramp-3: var(--ramp-3);
+  --color-ramp-4: var(--ramp-4);
+  --color-ramp-5: var(--ramp-5);
+  --color-ramp-6: var(--ramp-6);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Radii: marks 4, segmented thumb 6, controls and nested blocks 8, cards 12, hero 16 */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  /* Type scale (hydra.css levels 1 to 4) */
+  --text-hero: 76px;
+  --text-hero--line-height: 0.95;
+  --text-hero--letter-spacing: -0.045em;
+  --text-hero--font-weight: 300;
+  --text-figure: 40px;
+  --text-figure--line-height: 1;
+  --text-figure--letter-spacing: -0.03em;
+  --text-figure--font-weight: 500;
+  --text-figure-s: 26px;
+  --text-figure-s--line-height: 1;
+  --text-figure-s--letter-spacing: -0.025em;
+  --text-figure-s--font-weight: 500;
+  --text-title: 26px;
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.022em;
+  --text-title--font-weight: 500;
+  --text-section: 20px;
+  --text-section--line-height: 1.2;
+  --text-section--letter-spacing: -0.015em;
+  --text-section--font-weight: 500;
+  --text-tab: 15px;
+  --text-tab--line-height: 1.35;
+  --text-body: 14px;
+  --text-body--line-height: 1.35;
+  --text-body--letter-spacing: -0.016em;
+  --text-label: 13px;
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: -0.01em;
+  --text-tag: 12px;
+  --text-tag--line-height: 1.3;
+  --text-tag--letter-spacing: -0.01em;
+  /* The word "Hydra" next to the mark (sidebar, phone header) */
+  --text-wordmark: 21px;
+  --text-wordmark--line-height: 1;
+  --text-wordmark--letter-spacing: -0.02em;
+  --text-wordmark--font-weight: 400;
+  /* Phone tab labels */
+  --text-micro: 10px;
+  --text-micro--line-height: 1.2;
+  --text-micro--font-weight: 500;
+
+  --ease-hydra: ease;
+
+  --animate-hy-slide: hy-slide 280ms ease both;
+  --animate-hy-fade: hy-fade 200ms ease both;
+
+  @keyframes hy-slide {
+    from {
+      transform: translateX(28px);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @keyframes hy-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.35;
+    letter-spacing: -0.016em;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

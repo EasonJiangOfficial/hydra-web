@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 300 84" role="img" aria-label="Hydra">
+  <!-- Construction: x = cap height of the word (44). Mark height 1.5x (66), centered on the capitals.
+       Ring stroke 5 = letter stem of the word at Regular 400. Gap between mark and word 0.5x (22).
+       The word is live text in the system sans (SF Pro on Apple devices). Convert it to outlines for print or for non-Apple use. -->
+  <g fill="none" stroke="#1D1D1F" stroke-width="5">
+    <circle cx="34.74" cy="21.71" r="19.21"/>
+    <circle cx="21.71" cy="44.29" r="19.21"/>
+    <circle cx="47.76" cy="44.29" r="19.21"/>
+  </g>
+  <text x="91.47" y="55" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Inter, Arial, sans-serif" font-size="62.4" font-weight="400" letter-spacing="-1.2" fill="#1D1D1F">Hydra</text>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Hydra app icon">
+  <!-- Full-bleed square. iOS and the PWA manifest apply their own corner mask. Mark is 52% of the icon height. -->
+  <rect width="1024" height="1024" fill="#1D1D1F"/>
+  <g transform="translate(231.7 245.8) scale(8.07)" fill="none" stroke="#FFFFFF" stroke-width="5">
+    <circle cx="34.74" cy="21.71" r="19.21"/>
+    <circle cx="21.71" cy="44.29" r="19.21"/>
+    <circle cx="47.76" cy="44.29" r="19.21"/>
+  </g>
+</svg>

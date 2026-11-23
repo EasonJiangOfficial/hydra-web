@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hydra planning</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="hydra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="app" style="position: relative">
+  <dc-import name="Sidebar" active="Planning" hint-size="232px,1080px"></dc-import>
+  <div class="main">
+    <div class="top">
+      <h1 class="h1">Planning</h1>
+      <span class="pill">Sample data</span>
+      <div class="sp"></div>
+      <div class="seg" role="group" aria-label="View">
+        <sc-for list="{{views}}" as="v" hint-placeholder-count="3"><button class="{{v.cls}}" onClick="{{v.pick}}">{{v.label}}</button></sc-for>
+      </div>
+      <button class="btn">Category: All</button>
+      <button class="btn">Goal: All</button>
+      <span class="pill t">Google Calendar synced</span>
+      <button class="btn p">+ New</button>
+    </div>
+
+    <section class="col" style="gap: 8px">
+      <div class="row"><span class="lbl">Goals</span><span class="hint">Progress updates by itself from your money, UGC and task data</span></div>
+      <div class="g" style="grid-template-columns: repeat(4, minmax(0, 1fr))">
+        <sc-for list="{{goals}}" as="g" hint-placeholder-count="3">
+          <button class="card" style="text-align: left; gap: 8px; padding: 16px">
+            <span class="row"><span style="flex: 1; font-weight: 600">{{g.title}}</span><span class="pill">{{g.cat}}</span></span>
+            <span class="row hint"><span style="flex: 1">{{g.metric}}</span><span class="tn">{{g.value}}</span></span>
+            <span class="bar"><i style="{{g.bar}}"></i></span>
+            <span class="row hint"><span style="flex: 1">{{g.tasks}}</span><span>{{g.due}}</span></span>
+          </button>
+        </sc-for>
+        <button class="card" style="align-items: center; justify-content: center; border-style: dashed; color: #5F6F6E">+ New goal<span class="hint">Pick a metric, a target and a date</span></button>
+      </div>
+    </section>
+
+    <sc-if value="{{isBoard}}" hint-placeholder-val="{{true}}">
+      <div class="g" style="grid-template-columns: repeat(4, minmax(0, 1fr)); flex: 1; min-height: 0">
+        <sc-for list="{{columns}}" as="c" hint-placeholder-count="4">
+          <section style="background: #F5F5F7; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 0">
+            <div class="row" style="padding: 0 4px"><span style="{{c.dot}}"></span><span style="font-weight: 600; flex: 1">{{c.name}}</span><span class="hint tn">{{c.count}}</span></div>
+            <sc-for list="{{c.tasks}}" as="t" hint-placeholder-count="2">
+              <div class="card" style="padding: 12px; gap: 8px">
+                <button onClick="{{t.open}}" style="border: 0; background: transparent; padding: 0; text-align: left; font-weight: 500">{{t.title}}</button>
+                <div class="row" style="flex-wrap: wrap; gap: 6px"><span class="{{t.catCls}}">{{t.cat}}</span><span class="pill">{{t.goal}}</span><span class="{{t.dueCls}}">{{t.due}}</span></div>
+                <div class="row"><span class="hint" style="flex: 1">{{t.pri}}</span><button class="btn g" style="height: 26px; padding: 0 8px" onClick="{{t.advance}}" aria-label="Move to next status">Move →</button></div>
+              </div>
+            </sc-for>
+            <input class="in" aria-label="{{c.aria}}" placeholder="+ New task, press Enter" onKeyDown="{{c.add}}" style="background: transparent; border-style: dashed">
+          </section>
+        </sc-for>
+      </div>
+      <div class="wf">Drag a card between columns or up and down. Click a title to open it. Type in a column and press Enter to add a task. Group the board by status, category, goal or priority.</div>
+    </sc-if>
+
+    <sc-if value="{{isCalendar}}" hint-placeholder-val="{{false}}">
+      <section class="card" style="flex: 1; min-height: 0; gap: 8px">
+        <div class="row"><button class="btn">‹</button><span style="font-weight: 600">November 2026</span><button class="btn">›</button><button class="btn g">Today</button><div class="sp"></div>
+          <span class="row hint"><span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #F5F5F7; color: #1D1D1F">Task</span><span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #1D1D1F; color: #fff">Event</span><span style="font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px dashed #86868B; color: #1D1D1F">Bill or tax date</span><span style="font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px solid #1D1D1F; color: #1D1D1F">Payout</span></span></div>
+        <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0; border-top: 1px solid #E5E5EA; border-left: 1px solid #E5E5EA; flex: 1">
+          <sc-for list="{{cal}}" as="d" hint-placeholder-count="35">
+            <div style="{{d.style}}"><span class="hint tn">{{d.n}}</span>
+              <sc-for list="{{d.items}}" as="it" hint-placeholder-count="1"><span style="{{it.style}}">{{it.label}}</span></sc-for>
+            </div>
+          </sc-for>
+        </div>
+        <div class="wf">Click a day to add a task or an event. Drag an item to another day to move its date. Bill dates, tax dates and expected payouts come from your finance data and cannot be dragged. Tasks and events with a date also go to Google Calendar, and edits there come back.</div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isTable}}" hint-placeholder-val="{{false}}">
+      <section class="card" style="flex: 1; min-height: 0">
+        <table>
+          <thead><tr><th>Title</th><th>Status</th><th>Category</th><th>Goal</th><th>Due</th><th>Priority</th></tr></thead>
+          <tbody>
+            <sc-for list="{{rows}}" as="t" hint-placeholder-count="8">
+              <tr><td><button onClick="{{t.open}}" style="border: 0; background: transparent; padding: 0; font-weight: 500">{{t.title}}</button></td><td><span class="pill">{{t.status}}</span></td><td><span class="{{t.catCls}}">{{t.cat}}</span></td><td>{{t.goal}}</td><td class="tn">{{t.due}}</td><td>{{t.pri}}</td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <div class="wf">Click a header to sort. Click any cell to edit it in place. Add your own properties: select, multi-select, number, text, checkbox, date, link.</div>
+      </section>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{drawerOpen}}" hint-placeholder-val="{{false}}">
+    <aside class="card drawer" aria-label="Task details" style="position: absolute; right: 0; top: 0; width: 420px; height: 1080px; border-radius: 0; border-width: 0 0 0 1px; gap: 16px; padding: 24px">
+      <div class="row"><span class="lbl" style="flex: 1">Task</span><button class="btn g" onClick="{{closeDrawer}}">Close</button></div>
+      <span style="font-size: 20px; font-weight: 600">{{sel.title}}</span>
+      <div class="g" style="grid-template-columns: 110px 1fr; gap: 12px; align-items: center">
+        <span class="hint">Status</span><span><span class="pill">{{sel.status}}</span></span>
+        <span class="hint">Category</span><span><span class="{{sel.catCls}}">{{sel.cat}}</span></span>
+        <span class="hint">Goal</span><span><span class="pill">{{sel.goal}}</span></span>
+        <span class="hint">Due</span><span class="tn">{{sel.due}}</span>
+        <span class="hint">Repeat</span><span>Does not repeat</span>
+        <span class="hint">Priority</span><span>{{sel.pri}}</span>
+      </div>
+      <label class="col" style="gap: 6px"><span class="hint">Notes</span><textarea class="in" rows="8" style="height: auto; padding: 10px; resize: none" placeholder="Write notes, checklists and links here"></textarea></label>
+      <div class="wf">Every field saves by itself. The goal's task progress moves when this task is done. Repeat choices: daily, weekdays, weekly, monthly.</div>
+      <div class="sp"></div>
+      <button class="btn" style="color: #B4301F; align-self: flex-start">Delete task</button>
+    </aside>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const view = st.view || 'Board';
+    const statuses = ['Not started', 'In progress', 'Blocked', 'Done'];
+    const dots = ['#C7C7CC', '#1D1D1F', '#B3261E', '#8E8E93'];
+    const tasks = st.tasks || [
+      { id: 1, title: 'Film 6 Wordwise videos', status: 0, cat: 'UGC', goal: 'Post 3 a day', due: 'Nov 22', pri: 'High' },
+      { id: 2, title: 'Send W-9 to Brightleaf', status: 0, cat: 'Taxes', goal: 'No goal', due: 'Nov 24', pri: 'Medium' },
+      { id: 3, title: 'Set aside Q4 estimated tax', status: 1, cat: 'Taxes', goal: 'No goal', due: 'Jan 15', pri: 'High' },
+      { id: 4, title: 'Edit batch 12', status: 1, cat: 'UGC', goal: 'Post 3 a day', due: 'Nov 21', pri: 'Urgent' },
+      { id: 5, title: 'Chase Canvasly unpaid invoice', status: 2, cat: 'UGC', goal: '$10k December', due: 'Nov 18', pri: 'High' },
+      { id: 6, title: 'Move $1,000 to savings', status: 3, cat: 'Finance', goal: 'Net worth $60k', due: 'Nov 15', pri: 'Low' },
+      { id: 7, title: 'Pitch 3 new brands', status: 0, cat: 'UGC', goal: '$10k December', due: 'Nov 28', pri: 'Medium' }
+    ];
+    const catCls = (c) => 'pill ' + (c === 'UGC' ? 't' : c === 'Taxes' ? 'w' : '');
+    const open = (id) => () => this.setState({ sel: id });
+    const deco = (t) => ({ ...t, status: statuses[t.status], catCls: catCls(t.cat), dueCls: 'pill' + (t.status === 2 ? ' n' : ''), open: open(t.id),
+      advance: () => this.setState({ tasks: tasks.map((x) => x.id === t.id ? { ...x, status: Math.min(3, x.status + 1) } : x) }) });
+    const columns = statuses.map((name, i) => {
+      const list = tasks.filter((t) => t.status === i).map(deco);
+      return { name, count: list.length, tasks: list, aria: 'New task in ' + name, dot: 'width:8px;height:8px;border-radius:50%;background:' + dots[i],
+        add: (e) => { if (e.key === 'Enter' && e.target.value.trim()) { const title = e.target.value.trim(); e.target.value = ''; this.setState({ tasks: tasks.concat([{ id: tasks.length + 10, title, status: i, cat: 'UGC', goal: 'No goal', due: 'No date', pri: 'Medium' }]) }); } } };
+    });
+    const views = ['Board', 'Calendar', 'Table'].map((label) => ({ label, cls: label === view ? 'on' : '', pick: () => this.setState({ view: label }) }));
+    const done = (g) => tasks.filter((t) => t.goal === g && t.status === 3).length + ' of ' + tasks.filter((t) => t.goal === g).length + ' tasks done';
+    const goals = [
+      { title: 'Post 3 videos a day', cat: 'UGC', metric: 'Posts per day', value: '2.6 / 3', bar: 'width:87%', tasks: done('Post 3 a day'), due: 'Ongoing' },
+      { title: '$10k UGC revenue in December', cat: 'UGC', metric: 'UGC revenue', value: '$3,940 / $10,000', bar: 'width:39%', tasks: done('$10k December'), due: 'Dec 31' },
+      { title: 'Net worth $60k', cat: 'Finance', metric: 'Net worth', value: '$48.2k / $60k', bar: 'width:80%', tasks: done('Net worth $60k'), due: 'Mar 31' }
+    ];
+    const chip = { task: 'background:#F5F5F7;color:#1D1D1F', event: 'background:#1D1D1F;color:#fff', bill: 'background:#fff;color:#1D1D1F;border:1px dashed #86868B', pay: 'background:#fff;color:#1D1D1F;border:1px solid #1D1D1F' };
+    const items = { 15: [['Move $1,000 to savings', 'task']], 18: [['Chase Canvasly invoice', 'task']], 20: [['Wordwise brief call 2 pm', 'event']], 21: [['Edit batch 12', 'task']], 22: [['Film 6 Wordwise videos', 'task']], 24: [['Send W-9 to Brightleaf', 'task']], 27: [['Amex Gold due $1,604', 'bill']], 28: [['Pitch 3 new brands', 'task']], 30: [['Brightleaf deadline: 4 videos', 'event']], 1: [['Rent $1,450', 'bill']], 5: [['Wordwise payout +$1,260', 'pay']] };
+    const cal = [];
+    for (let i = 0; i < 35; i++) {
+      const n = i < 30 ? i + 1 : i - 29, next = i >= 30, today = n === 21 && !next;
+      const key = next ? null : n;
+      const its = ((next ? (n === 1 ? items[1] : n === 5 ? items[5] : null) : (key === 1 || key === 5 ? null : items[key])) || []);
+      cal.push({ n: (next ? 'Dec ' : '') + n, items: its.map(([label, kind]) => ({ label, style: 'display:block;font-size:11px;font-weight:500;padding:2px 6px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + chip[kind] })),
+        style: 'border-right:1px solid #E5E5EA;border-bottom:1px solid #E5E5EA;padding:6px;display:flex;flex-direction:column;gap:3px;min-height:92px;min-width:0;' + (today ? 'background:#F5F5F7' : next ? 'background:#FAFAFA' : '') });
+    }
+    const selRaw = tasks.find((t) => t.id === st.sel);
+    return { views, isBoard: view === 'Board', isCalendar: view === 'Calendar', isTable: view === 'Table', columns, goals, cal, rows: tasks.map(deco),
+      drawerOpen: !!selRaw, sel: selRaw ? deco(selRaw) : {}, closeDrawer: () => this.setState({ sel: null }) };
+  }
+}
+</script>
+</body>
+</html>

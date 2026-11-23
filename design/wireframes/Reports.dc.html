@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hydra reports</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="hydra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="app">
+  <dc-import name="Sidebar" active="Reports" hint-size="232px,1080px"></dc-import>
+  <div class="main">
+    <div class="top">
+      <h1 class="h1">Reports</h1>
+      <span class="pill">Sample data</span>
+      <div class="sp"></div>
+      <div class="seg" role="group" aria-label="Scope">
+        <sc-for list="{{scopes}}" as="s" hint-placeholder-count="3"><button class="{{s.cls}}" onClick="{{s.pick}}">{{s.label}}</button></sc-for>
+      </div>
+      <button class="btn">Nov 1 - Nov 30, 2026</button>
+      <button class="btn">Filters</button>
+      <div style="position: relative">
+        <button class="btn p" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}">Download report</button>
+        <sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+          <div class="card" style="position: absolute; right: 0; top: 42px; width: 300px; gap: 0; padding: 8px; z-index: 5; box-shadow: 0 8px 24px rgba(12,27,26,.12)">
+            <button class="btn g" style="justify-content: flex-start">Monthly summary (PDF)</button>
+            <button class="btn g" style="justify-content: flex-start">Transactions in this view (CSV)</button>
+            <button class="btn g" style="justify-content: flex-start">Income by payer (CSV)</button>
+            <button class="btn g" style="justify-content: flex-start">Year-end tax pack (PDF + CSV)</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <div class="tabs" role="tablist">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="4"><button role="tab" class="{{t.cls}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+    </div>
+    <div class="strip" style="grid-template-columns: repeat(4, minmax(0, 1fr))">
+      <section class="card"><span class="lbl">Net income</span><span class="num s">$3,575</span></section>
+      <section class="card"><span class="lbl">Income</span><span class="num s">$6,480</span></section>
+      <section class="card"><span class="lbl">Expenses</span><span class="num s">$2,905</span></section>
+      <section class="card"><span class="lbl">Savings rate</span><span class="num s">35.1%</span><span class="hint">Share of income kept after expenses and the tax set-aside.</span></section>
+    </div>
+
+    <sc-if value="{{isFlow}}" hint-placeholder-val="{{true}}">
+      <section class="card" style="flex: 1; min-height: 0">
+        <div class="row"><span class="lbl">Cash flow</span><div class="sp"></div>
+          <div class="seg" role="group" aria-label="Group by"><button class="on">By category</button><button>By group</button><button>Both</button></div>
+          <div class="seg" role="group" aria-label="Chart type"><button class="on">Sankey</button><button>Bars</button></div>
+        </div>
+        <div style="position: relative; width: 1080px; height: 440px; margin-top: 8px">
+          <svg viewBox="0 0 1080 440" width="1080" height="440" style="position: absolute; left: 0; top: 0" role="img" aria-label="Sankey chart: income sources flow into income, then into savings, taxes and expense categories">
+            <path d="{{l0.d}}" fill="{{l0.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l1.d}}" fill="{{l1.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l2.d}}" fill="{{l2.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l3.d}}" fill="{{l3.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l4.d}}" fill="{{l4.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l5.d}}" fill="{{l5.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l6.d}}" fill="{{l6.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l7.d}}" fill="{{l7.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l8.d}}" fill="{{l8.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l9.d}}" fill="{{l9.fill}}" fill-opacity="0.32"></path>
+            <path d="{{l10.d}}" fill="{{l10.fill}}" fill-opacity="0.32"></path>
+          </svg>
+          <sc-for list="{{nodes}}" as="n" hint-placeholder-count="12"><div style="{{n.style}}"></div></sc-for>
+          <sc-for list="{{labels}}" as="b" hint-placeholder-count="12"><div style="{{b.style}}"><span style="display: block; font-size: 12px; color: #4A5B5A">{{b.name}}</span><span class="tn" style="font-size: 13px; font-weight: 600">{{b.value}}</span></div></sc-for>
+        </div>
+        <div class="wf">Hover a band to see its amount. Click a band or a category to open the transactions behind it. "Taxes set aside" is the money Hydra tells you to hold for the IRS.</div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isSpend}}" hint-placeholder-val="{{false}}">
+      <div class="g g12" style="flex: 1; min-height: 0">
+        <section class="card s5" style="align-items: center">
+          <span class="lbl" style="align-self: flex-start">Expenses by category</span>
+          <svg viewBox="0 0 200 200" width="260" height="260" role="img" aria-label="Donut chart of expenses by category">
+            <g transform="rotate(-90 100 100)" fill="none" stroke-width="26">
+              <circle cx="100" cy="100" r="70" stroke="#424245" stroke-dasharray="217.5 439.8" stroke-dashoffset="0"></circle>
+              <circle cx="100" cy="100" r="70" stroke="#8E8E93" stroke-dasharray="76.7 439.8" stroke-dashoffset="-219.5"></circle>
+              <circle cx="100" cy="100" r="70" stroke="#A1A1A6" stroke-dasharray="44.9 439.8" stroke-dashoffset="-298.2"></circle>
+              <circle cx="100" cy="100" r="70" stroke="#6E6E73" stroke-dasharray="35.1 439.8" stroke-dashoffset="-345.1"></circle>
+              <circle cx="100" cy="100" r="70" stroke="#D2D2D7" stroke-dasharray="28.3 439.8" stroke-dashoffset="-382.2"></circle>
+              <circle cx="100" cy="100" r="70" stroke="#1D1D1F" stroke-dasharray="25.3 439.8" stroke-dashoffset="-412.5"></circle>
+            </g>
+            <text x="100" y="98" text-anchor="middle" font-size="20" font-weight="600" fill="#0C1B1A">$2,905</text>
+            <text x="100" y="116" text-anchor="middle" font-size="10" fill="#5F6F6E">November</text>
+          </svg>
+          <div class="row"><span class="hint">Total, last 6 months: $16,204</span><span class="hint">Average per month: $2,701</span></div>
+        </section>
+        <section class="card s7">
+          <span class="lbl">Categories</span>
+          <table>
+            <thead><tr><th>Category</th><th>Share</th><th class="r">Amount</th><th class="r">vs last month</th></tr></thead>
+            <tbody>
+              <sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+                <tr><td><span style="{{c.dot}}"></span>{{c.name}}</td><td style="width: 220px"><div class="bar"><i style="{{c.bar}}"></i></div></td><td class="r tn">{{c.amt}}</td><td class="{{c.cls}}">{{c.delta}}</td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <div class="wf">Click a category to see its transactions. Click the donut to drill into sub-categories.</div>
+        </section>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isIncome}}" hint-placeholder-val="{{false}}">
+      <section class="card" style="flex: 1; min-height: 0">
+        <span class="lbl">Income by payer, 2026 year to date</span>
+        <table>
+          <thead><tr><th>Payer</th><th>Business</th><th class="r">Payments</th><th class="r">This month</th><th class="r">Year to date</th><th>Tax form</th></tr></thead>
+          <tbody>
+            <tr><td>Wordwise Inc</td><td><span class="pill t">UGC</span></td><td class="r tn">14</td><td class="r tn">$3,200.00</td><td class="r tn">$28,460.00</td><td><span class="pill">1099-NEC expected</span></td></tr>
+            <tr><td>Brightleaf</td><td><span class="pill t">UGC</span></td><td class="r tn">9</td><td class="r tn">$2,080.00</td><td class="r tn">$15,120.00</td><td><span class="pill">1099-NEC expected</span></td></tr>
+            <tr><td>Canvasly</td><td><span class="pill t">UGC</span></td><td class="r tn">3</td><td class="r tn">$0.00</td><td class="r tn">$1,575.00</td><td><span class="pill w">No form, still taxable</span></td></tr>
+            <tr><td>Other deposits</td><td><span class="pill">Personal</span></td><td class="r tn">4</td><td class="r tn">$1,200.00</td><td class="r tn">$4,900.00</td><td><span class="pill">Not business</span></td></tr>
+          </tbody>
+        </table>
+        <div class="wf">Hydra totals income per payer by itself, so you do not wait for forms. Click a payer to see every deposit and the UGC deal it was matched to.</div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isTrends}}" hint-placeholder-val="{{false}}">
+      <section class="card" style="flex: 1; min-height: 0">
+        <div class="row"><span class="lbl">Income and expenses by month</span><div class="sp"></div><span class="row hint"><span style="width: 10px; height: 10px; border-radius: 2px; background: #1D1D1F"></span>Income<span style="width: 10px; height: 10px; border-radius: 2px; background: #8E8E93"></span>Expenses</span></div>
+        <div style="display: flex; align-items: flex-end; gap: 36px; height: 320px; padding: 0 24px; border-bottom: 1px solid #E3E8E8">
+          <sc-for list="{{months}}" as="m" hint-placeholder-count="6">
+            <div style="flex: 1; display: flex; align-items: flex-end; gap: 6px; height: 100%"><div data-tip="{{m.inTip}}" style="{{m.inStyle}}"></div><div data-tip="{{m.outTip}}" style="{{m.outStyle}}"></div></div>
+          </sc-for>
+        </div>
+        <div style="display: flex; gap: 36px; padding: 0 24px"><sc-for list="{{months}}" as="m" hint-placeholder-count="6"><div class="hint" style="flex: 1; text-align: center">{{m.label}}<span class="tn" style="display: block; color: #0C1B1A">{{m.net}}</span></div></sc-for></div>
+        <div class="wf">Net income is under each month. Click a month to load it into every tab on this page.</div>
+      </section>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const tab = st.tab || 'Cash flow', scope = st.scope || 'All';
+    const usd = (n) => '$' + n.toLocaleString('en-US');
+    const tabs = ['Cash flow', 'Spending', 'Income', 'Trends'].map((label) => ({ label, cls: label === tab ? 'on' : '', pick: () => this.setState({ tab: label }) }));
+    const scopes = ['All', 'Personal', 'UGC'].map((label) => ({ label, cls: label === scope ? 'on' : '', pick: () => this.setState({ scope: label }) }));
+    // Sankey layout: sources -> Income -> where it went
+    const src = [['Wordwise (UGC)', 3200, '#1D1D1F'], ['Brightleaf (UGC)', 2080, '#6E6E73'], ['Other income', 1200, '#A1A1A6']];
+    // The Sankey is the one chart that uses color (owner, 2026-11-21). Income side stays ink and gray.
+    // Each place the money goes gets one muted color. No green, no teal.
+    const dst = [['Savings', 2275, '#3F5F8A'], ['Housing', 1450, '#D9A441'], ['Taxes set aside', 1300, '#7B6BB0'], ['Food', 520, '#C96A4B'], ['Software', 310, '#5E8FC9'], ['Shopping', 245, '#C77A9B'], ['Other', 200, '#A1A1A6'], ['Transport', 180, '#8C6F4E']];
+    const total = 6480, H = 440, gap = 8, nw = 14, x0 = 0, x1 = 520, x2 = 1066;
+    const k = (H - gap * (dst.length - 1)) / total;
+    const band = (xa, ya, xb, yb, h) => { const m = (xa + xb) / 2; return 'M' + xa + ' ' + ya + 'C' + m + ' ' + ya + ',' + m + ' ' + yb + ',' + xb + ' ' + yb + 'L' + xb + ' ' + (yb + h) + 'C' + m + ' ' + (yb + h) + ',' + m + ' ' + (ya + h) + ',' + xa + ' ' + (ya + h) + 'Z'; };
+    const box = (x, y, h, c) => ({ style: 'position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + nw + 'px;height:' + Math.max(2, h) + 'px;border-radius:3px;background:' + c });
+    const pct = (v) => ' (' + (v / total * 100).toFixed(1) + '%)';
+    const nodes = [], labels = [], out = {};
+    const midTop = (H - total * k) / 2;
+    nodes.push(box(x1, midTop, total * k, '#1D1D1F'));
+    labels.push({ name: 'Income', value: usd(total) + ' (100%)', style: 'position:absolute;left:' + (x1 + nw + 10) + 'px;top:' + (H / 2 - 18) + 'px' });
+    let ys = (H - (total * k + gap * (src.length - 1))) / 2, ym = midTop, i = 0;
+    src.forEach(([name, v, c]) => { const h = v * k;
+      nodes.push(box(x0, ys, h, c));
+      labels.push({ name, value: usd(v) + pct(v), style: 'position:absolute;left:' + (x0 + nw + 10) + 'px;top:' + (ys + h / 2 - 18) + 'px' });
+      out['l' + i++] = { d: band(x0 + nw, ys, x1, ym, h), fill: c }; ys += h + gap; ym += h; });
+    let yd = 0; ym = midTop;
+    dst.forEach(([name, v, c]) => { const h = v * k;
+      nodes.push(box(x2, yd, h, c));
+      if (h >= 30) labels.push({ name, value: usd(v) + pct(v), style: 'position:absolute;right:' + (1080 - x2 + 10) + 'px;top:' + (yd + h / 2 - 18) + 'px;text-align:right' });
+      out['l' + i++] = { d: band(x1 + nw, ym, x2, yd, h), fill: c }; yd += h + gap; ym += h; });
+    const catRaw = [['Housing', 1450, '#424245', '0%'], ['Food', 520, '#8E8E93', '+18%'], ['Software', 310, '#A1A1A6', '+4%'], ['Shopping', 245, '#6E6E73', '+61%'], ['Other', 200, '#D2D2D7', '-9%'], ['Transport', 180, '#1D1D1F', '-22%']];
+    const cats = catRaw.map(([name, v, c, delta]) => ({ name, amt: usd(v) + '.00', delta, cls: 'r tn ' + (delta[0] === '+' ? 'neg' : 'pos'),
+      dot: 'display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:10px;background:' + c, bar: 'width:' + Math.round(v / 1450 * 100) + '%;background:' + c }));
+    const mRaw = [['Jun', 5100, 2480], ['Jul', 5900, 2610], ['Aug', 4700, 2890], ['Sep', 6900, 2540], ['Oct', 7300, 2779], ['Nov', 6480, 2905]];
+    const months = mRaw.map(([label, a, b]) => ({ label, net: '+' + usd(a - b), inTip: 'Income ' + usd(a), outTip: 'Expenses ' + usd(b),
+      inStyle: 'flex:1;border-radius:4px 4px 0 0;background:#1D1D1F;height:' + Math.round(a / 7300 * 100) + '%', outStyle: 'flex:1;border-radius:4px 4px 0 0;background:#8E8E93;height:' + Math.round(b / 7300 * 100) + '%' }));
+    return { tabs, scopes, isFlow: tab === 'Cash flow', isSpend: tab === 'Spending', isIncome: tab === 'Income', isTrends: tab === 'Trends',
+      menuOpen: !!st.menu, toggleMenu: () => this.setState({ menu: !st.menu }), nodes, labels, cats, months, ...out };
+  }
+}
+</script>
+</body>
+</html>

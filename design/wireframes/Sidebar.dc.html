@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hydra sidebar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<nav aria-label="Main" style="width: {{w}}; height: 1080px; flex: none; box-sizing: border-box; background: #FFFFFF; border-right: 1px solid #E5E5EA; padding: 28px 12px 20px; display: flex; flex-direction: column; gap: 2px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Inter, Arial, sans-serif; font-size: 14px; letter-spacing: -0.016em; color: #1D1D1F">
+  <div style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; margin-bottom: 24px">
+    <svg width="23.4" height="22.2" viewBox="0 0 69.47 66" role="img" aria-label="Hydra" style="flex: none"><g fill="none" stroke="#1D1D1F" stroke-width="5"><circle cx="34.74" cy="21.71" r="19.21"></circle><circle cx="21.71" cy="44.29" r="19.21"></circle><circle cx="47.76" cy="44.29" r="19.21"></circle></g></svg>
+    <sc-if value="{{open}}" hint-placeholder-val="{{true}}"><span style="font-weight: 400; font-size: 21px; line-height: 1; letter-spacing: -0.02em; flex: 1">Hydra</span></sc-if>
+    <sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+      <button aria-label="Collapse sidebar" onClick="{{toggle}}" style="width: 28px; height: 28px; border: 0; background: transparent; border-radius: 8px; cursor: pointer; color: #6A6B6B">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </sc-if>
+  </div>
+  <sc-if value="{{closed}}" hint-placeholder-val="{{false}}">
+    <button aria-label="Expand sidebar" onClick="{{toggle}}" style="height: 36px; border: 0; background: transparent; border-radius: 8px; cursor: pointer; color: #6A6B6B; margin-bottom: 8px">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </button>
+  </sc-if>
+  <sc-for list="{{items}}" as="item" hint-placeholder-count="7">
+    <a href="{{item.href}}" aria-label="{{item.label}}" style="{{item.style}}">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" style="flex: none"><path d="{{item.icon}}" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <sc-if value="{{open}}" hint-placeholder-val="{{true}}"><span>{{item.label}}</span></sc-if>
+    </a>
+  </sc-for>
+  <div style="flex: 1"></div>
+  <a href="Taxes.dc.html" aria-label="Ask Hydra" style="{{askStyle}}">
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" style="flex: none"><path d="M9 2l1.6 4.4L15 8l-4.4 1.6L9 14l-1.6-4.4L3 8l4.4-1.6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+    <sc-if value="{{open}}" hint-placeholder-val="{{true}}"><span>Ask Hydra</span></sc-if>
+  </a>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["Dashboard","Planning","UGC Tracker","Reports","Transactions","Taxes","Accounts"],"default":"Dashboard"},"$preview":{"width":232,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const open = !(this.state && this.state.collapsed);
+    const active = this.props.active ?? 'Dashboard';
+    const base = [
+      ['Dashboard', 'Main.dc.html', 'M3 8l6-5 6 5v7H3z'],
+      ['Planning', 'Planning.dc.html', 'M3 4h12v11H3zM3 7h12M6 2v3m6-3v3'],
+      ['UGC Tracker', 'Ugc.dc.html', 'M3 4h12v10H3zM7.5 7v4l3.5-2z'],
+      ['Reports', 'Reports.dc.html', 'M3 15V3m0 12h12M6 12V9m3 3V6m3 6v-4'],
+      ['Transactions', 'Transactions.dc.html', 'M3 6h11l-3-3M15 12H4l3 3'],
+      ['Taxes', 'Taxes.dc.html', 'M5 2h8v14l-2-1.5L9 16l-2-1.5L5 16zM7.5 6h3m-3 3h3'],
+      ['Accounts', 'Accounts.dc.html', 'M2 7l7-4 7 4M4 8v6m3.5-6v6m3.5-6v6m3-6v6M2 15h14']
+    ];
+    const row = 'display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:6px;text-decoration:none;' + (open ? '' : 'justify-content:center;');
+    const items = base.map(([label, href, icon]) => {
+      const on = label === active;
+      return { label, href, icon, style: row + (on ? 'background:#F5F5F7;color:#1D1D1F;font-weight:500' : 'color:#6E6E73;font-weight:400') };
+    });
+    return { open, closed: !open, w: open ? '232px' : '64px', items, askStyle: row + 'color:#1D1D1F;font-weight:500',
+      toggle: () => this.setState({ collapsed: open }) };
+  }
+}
+</script>
+</body>
+</html>

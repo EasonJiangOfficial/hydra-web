@@ -1,0 +1,98 @@
+/* Hydra design language v5: built from the logo.
+   The logo is thin off-black rings and a regular-weight sans word. The UI follows it:
+   off-black on white, hairline outlines, regular and medium weights, small corners, no accent color.
+   Color carries meaning only once: red for money lost or overdue. Everything else is ink and gray.
+   Hierarchy: one hero per page (the one solid off-black card) > key figures > body > gray labels.
+   Radii: 12 cards, 8 controls and nested blocks, 4 small marks. No shadows, no gradients. */
+:root{
+  --canvas:#FFFFFF; --surface:#FFFFFF; --tint:#F5F5F7; --hover:#F0F0F2; --obsidian:#1D1D1F;
+  --ink:#1D1D1F; --ink2:#424245; --ink3:#6E6E73; --rule:#E5E5EA; --rule2:#D2D2D7;
+  --neg:#B3261E;
+  --sans:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Inter,Arial,sans-serif;
+  /* aliases kept so older markup still resolves; there is no accent color any more */
+  --teal:var(--ink); --tealink:var(--ink); --tealbg:var(--tint); --pos:var(--ink); --warn:var(--ink);
+  --bg:var(--canvas); --sunk:var(--tint); --line:var(--rule); --line2:var(--rule2);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--ink);font-size:14px;line-height:1.35;letter-spacing:-.016em;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;letter-spacing:inherit;color:inherit;cursor:pointer}
+.app{display:flex;width:1440px;height:1080px;background:var(--canvas);overflow:hidden;font-family:var(--sans);position:relative}
+.main{flex:1;min-width:0;padding:24px 40px;display:flex;flex-direction:column;gap:20px;overflow:hidden;position:relative}
+.top{display:flex;align-items:center;gap:8px;min-height:40px}
+.sp{flex:1}
+/* Level 1 */
+.h1{font-size:26px;font-weight:500;letter-spacing:-.022em;line-height:1.1;margin:0 8px 0 0}
+.num{font-weight:500;font-size:40px;letter-spacing:-.03em;line-height:1;font-variant-numeric:lining-nums tabular-nums}
+.num.hero{font-weight:300;font-size:76px;letter-spacing:-.045em;line-height:.95}
+/* Level 2 */
+.num.s{font-size:26px;letter-spacing:-.025em}
+.sec{font-size:20px;font-weight:500;letter-spacing:-.015em;line-height:1.2}
+/* Level 4 */
+.lbl{font-size:13px;font-weight:400;color:var(--ink3);line-height:1.3;letter-spacing:-.01em}
+.hint{font-size:13px;color:var(--ink3)}
+.tn{font-variant-numeric:tabular-nums}
+.muted{color:var(--ink3)} .ink2{color:var(--ink2)} .pos{color:var(--ink)} .neg{color:var(--neg)}
+/* Surfaces: white, hairline outline (the logo's line), small corners */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0;position:relative;text-align:left}
+.card .card{background:var(--tint);border:0;border-radius:8px}
+.card[style*="dashed"]{border:1px dashed var(--rule2);background:transparent}
+button.card:hover,a.card:hover{background:var(--hover)}
+.card.dark{background:var(--obsidian);border-color:var(--obsidian);color:#fff}
+.dark .lbl,.dark .hint{color:#A1A1A6} .dark .pos{color:#fff}
+.dark .seg{background:rgba(255,255,255,.12)} .dark .seg button{color:#A1A1A6} .dark .seg button.on{background:#fff;border-color:#fff;color:#1D1D1F}
+.strip{display:grid;gap:0;background:var(--surface);border:1px solid var(--rule);border-radius:12px}
+.strip>.card{background:transparent;border:0;border-radius:0}
+.strip>.card+.card{border-left:1px solid var(--rule)}
+.row{display:flex;align-items:center;gap:12px}
+.col{display:flex;flex-direction:column;gap:12px}
+.g{display:grid;gap:20px}
+.g12{grid-template-columns:repeat(12,minmax(0,1fr))}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s7{grid-column:span 7}.s8{grid-column:span 8}.s9{grid-column:span 9}.s12{grid-column:span 12}
+/* Controls */
+.btn{height:34px;padding:0 14px;border-radius:8px;border:1px solid var(--rule2);background:transparent;font-weight:400;font-size:14px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn.p{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500}
+.btn.g,.top .btn:not(.p){border-color:transparent;color:var(--ink);font-weight:500;padding:0 10px}
+.btn:hover{background:var(--tint)} .btn.p:hover{background:#000;border-color:#000}
+.seg{display:inline-flex;background:var(--tint);border-radius:8px;padding:2px;gap:0}
+.seg button{height:28px;padding:0 12px;border:1px solid transparent;border-radius:6px;background:transparent;font-size:13px;font-weight:400;color:var(--ink3)}
+.seg button.on{background:var(--surface);border-color:var(--rule2);color:var(--ink);font-weight:500}
+.tabs{display:flex;gap:28px;border-bottom:1px solid var(--rule)}
+.tabs button{border:0;background:transparent;padding:0 0 12px;font-size:15px;font-weight:400;color:var(--ink3);border-bottom:1.5px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--ink);font-weight:500;border-bottom-color:var(--ink)}
+/* Status and tags are plain text. Weight and gray carry them; red only for loss or overdue. */
+.pill{display:inline-flex;align-items:center;padding:0;border:0;background:transparent;font-size:12px;font-weight:500;letter-spacing:-.01em;color:var(--ink3);white-space:nowrap}
+.pill.t{color:var(--ink2)} .pill.w{color:var(--ink);font-weight:600} .pill.n{color:var(--neg)}
+.in{height:34px;border:1px solid var(--rule2);border-radius:8px;padding:0 12px;background:var(--surface);font:inherit;font-size:14px;letter-spacing:inherit;color:var(--ink);min-width:0}
+textarea.in{border-radius:8px}
+.in:focus{outline:0;border-color:var(--ink)}
+/* Lists and tables: hairlines only */
+.li{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--rule);font-size:14px}
+.li:first-child{border-top:0}
+.dark .li{border-color:rgba(255,255,255,.16)}
+.top>.pill{display:none}
+.ic{width:32px;height:32px;border-radius:6px;border:1px solid var(--rule);background:transparent;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--ink3);flex:none}
+.bar{height:4px;border-radius:2px;background:var(--rule);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;font-weight:400;color:var(--ink3);padding:8px 12px;border-bottom:1px solid var(--rule)}
+td{padding:12px;border-bottom:1px solid var(--rule)}
+td.r,th.r{text-align:right}
+/* Copy rule: no explanatory sentences on a page. They live behind an outlined info dot. */
+.wf,.card>.num.s+.hint:not(.neg):not(.pos){position:absolute;width:18px;height:18px;padding:0;border:1px solid var(--rule2);border-radius:9999px;background:var(--surface);font-size:0;line-height:0;letter-spacing:0;cursor:help;z-index:3}
+.wf{right:14px;bottom:14px}
+.card>.num.s+.hint:not(.neg):not(.pos){right:16px;top:16px}
+.wf::before,.card>.num.s+.hint:not(.neg):not(.pos)::before{content:"i";position:absolute;left:0;top:0;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;line-height:1;color:var(--ink3)}
+.wf:hover,.card>.num.s+.hint:not(.neg):not(.pos):hover{width:280px;height:auto;padding:12px 14px;border-radius:8px;border-color:var(--ink);background:var(--ink);color:#fff;font-size:12px;line-height:1.45;z-index:9}
+.wf:hover::before,.card>.num.s+.hint:not(.neg):not(.pos):hover::before{display:none}
+/* Hover card for chart marks, calendar days and rows */
+[data-tip]{position:relative}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);white-space:pre;background:var(--ink);color:#fff;font-size:12px;font-weight:400;line-height:1.45;text-align:left;padding:8px 10px;border-radius:8px;z-index:9;pointer-events:none;animation:hy-fade .2s ease}
+/* Slide-out panel: flat, a hairline, no shadow */
+.drawer{position:absolute;right:0;top:0;width:420px;height:100%;border-radius:0;border-width:0 0 0 1px;padding:28px;gap:16px;z-index:8;animation:hy-slide .3s ease}
+tr[style*="cursor"]:hover td{background:var(--tint)}
+/* Motion: restrained. 0.2s ease on state. No springs, no overshoot. */
+.btn,.seg button,.tabs button,.pill,.card,.in,td{transition:background-color .2s ease,border-color .2s ease,color .2s ease,opacity .2s ease}
+@keyframes hy-slide{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes hy-fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

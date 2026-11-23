@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hydra phone app home</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="hydra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FFFFFF; display: flex; flex-direction: column; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Inter, Arial, sans-serif; letter-spacing: -0.016em; position: relative">
+  <div style="flex: 1; min-height: 0; overflow: hidden; padding: 20px 16px 0; display: flex; flex-direction: column; gap: 12px">
+    <div class="row">
+      <svg width="23.4" height="22.2" viewBox="0 0 69.47 66" aria-hidden="true" style="flex: none; margin-right: -4px"><g fill="none" stroke="#1D1D1F" stroke-width="5"><circle cx="34.74" cy="21.71" r="19.21"></circle><circle cx="21.71" cy="44.29" r="19.21"></circle><circle cx="47.76" cy="44.29" r="19.21"></circle></g></svg>
+      <span style="font-size: 21px; font-weight: 400; line-height: 1; letter-spacing: -0.02em; flex: 1">Hydra</span>
+      <div class="seg" role="group" aria-label="Scope">
+        <sc-for list="{{scopes}}" as="s" hint-placeholder-count="3"><button class="{{s.cls}}" onClick="{{s.pick}}" style="height: 32px">{{s.label}}</button></sc-for>
+      </div>
+    </div>
+
+    <section class="card dark" style="padding: 20px 20px 0; gap: 8px; border-radius: 16px; overflow: hidden">
+      <span class="lbl">Net worth</span>
+      <span class="num hero" style="font-size: 52px">$48,212</span>
+      <span class="row" style="gap: 8px"><span class="pos tn">+$2,104</span><span class="hint">4.6% this month</span></span>
+      <svg viewBox="0 0 326 70" width="100%" height="70" preserveAspectRatio="none" role="img" aria-label="Net worth trend" style="margin: 0 -20px; width: calc(100% + 40px); display: block">
+        <path d="M0 58 C40 54 60 58 90 48 S150 46 180 36 S240 38 270 24 S310 18 326 10 L326 70 L0 70Z" fill="#FFFFFF" fill-opacity="0.08"></path>
+        <path d="M0 58 C40 54 60 58 90 48 S150 46 180 36 S240 38 270 24 S310 18 326 10" fill="none" stroke="#FFFFFF" stroke-width="1.25"></path>
+      </svg>
+    </section>
+
+    <div class="g" style="grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <a class="card" href="Accounts.dc.html" style="padding: 12px; gap: 4px"><span class="lbl">Cash</span><span class="num s" style="font-size: 20px">$31.8k</span></a>
+      <a class="card" href="Accounts.dc.html" style="padding: 12px; gap: 4px"><span class="lbl">Cards</span><span class="num s neg" style="font-size: 20px">-$2.3k</span></a>
+      <a class="card" href="Ugc.dc.html" style="padding: 12px; gap: 4px"><span class="lbl">UGC</span><span class="num s" style="font-size: 20px">$3.9k</span></a>
+    </div>
+
+    <section class="card" style="padding: 16px; gap: 10px">
+      <div class="row"><span class="lbl" style="flex: 1">Posting</span><span class="pill t">Streak 5</span><span class="pill n">-$420</span></div>
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px">
+        <sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+          <button aria-label="{{d.tip}}" onClick="{{d.pick}}" style="{{d.style}}"><span style="font-size: 10px">{{d.dow}}</span><span style="font-size: 13px; font-weight: 600">{{d.n}}</span><span aria-hidden="true" style="font-size: 7px; letter-spacing: 1px">{{d.dots}}</span></button>
+        </sc-for>
+      </div>
+      <div class="row tn" style="font-size: 12px; color: #46524F"><span style="flex: 1">{{sel.title}}</span><span>{{sel.money}}</span></div>
+    </section>
+
+    <section class="card" style="padding: 8px 16px; gap: 0; flex: 1; min-height: 0; overflow: hidden">
+      <sc-for list="{{tx}}" as="t" hint-placeholder-count="4">
+        <a class="li" href="Transactions.dc.html" style="min-height: 48px"><span class="ic">{{t.ic}}</span><span style="flex: 1; min-width: 0">{{t.name}}</span><span class="pill">{{t.cat}}</span><span class="{{t.cls}}">{{t.amt}}</span></a>
+      </sc-for>
+    </section>
+  </div>
+
+  <a href="Taxes.dc.html" aria-label="Ask Hydra" style="position: absolute; right: 16px; bottom: 84px; width: 52px; height: 52px; border-radius: 6px; background: #1D1D1F; color: #fff; display: flex; align-items: center; justify-content: center">
+    <svg width="22" height="22" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2l1.6 4.4L15 8l-4.4 1.6L9 14l-1.6-4.4L3 8l4.4-1.6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+  </a>
+
+  <nav aria-label="Tabs" style="height: 68px; flex: none; background: #FFFFFF; border-top: 1px solid #E5E5EA; display: grid; grid-template-columns: repeat(5, 1fr)">
+    <sc-for list="{{nav}}" as="n" hint-placeholder-count="5">
+      <a href="{{n.href}}" style="{{n.style}}">
+        <svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><path d="{{n.icon}}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <span style="font-size: 10px; font-weight: 500">{{n.label}}</span>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const scope = st.scope || 'All';
+    const scopes = ['All', 'Me', 'UGC'].map((label) => ({ label, cls: label === scope ? 'on' : '', pick: () => this.setState({ scope: label }) }));
+    const raw = [['S', 15, 3], ['M', 16, 3], ['T', 17, 2], ['W', 18, 3], ['T', 19, 0], ['F', 20, 3], ['S', 21, 3]];
+    const pick = st.day === undefined ? 6 : st.day;
+    const week = raw.map(([dow, n, c], i) => {
+      let bg = '#1D1D1F', color = '#fff', border = '1px solid transparent';
+      if (c === 0) { bg = '#FFFFFF'; color = '#86868B'; border = '1px solid #86868B'; } else if (c < 3) { bg = '#D2D2D7'; color = '#1D1D1F'; }
+      if (i === pick) border = '2px solid #1D1D1F';
+      return { dow, n, dots: '●'.repeat(c) + '○'.repeat(3 - c), tip: 'November ' + n + ', ' + c + ' of 3 posted', pick: () => this.setState({ day: i }),
+        style: 'height:60px;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:inherit;cursor:pointer;background:' + bg + ';color:' + color + ';border:' + border };
+    });
+    const [, sn, sc] = raw[pick];
+    const sel = { title: 'Nov ' + sn + ' · ' + sc + ' of 3', money: sc >= 3 ? '+$' + sc * 30 : '-$' + (3 - sc) * 30 + ' missed' };
+    const tx = [
+      { ic: 'PH', name: 'Wordwise payout', cat: 'UGC', amt: '+$1,420', cls: 'tn pos' },
+      { ic: 'TG', name: 'Target', cat: 'Review', amt: '-$84', cls: 'tn' },
+      { ic: 'AD', name: 'Adobe', cat: 'Software', amt: '-$60', cls: 'tn' },
+      { ic: 'UB', name: 'Uber Eats', cat: 'Food', amt: '-$27', cls: 'tn' }
+    ];
+    const nav = [
+      ['Home', 'Main.dc.html', 'M3 8l6-5 6 5v7H3z', true],
+      ['Plan', 'Planning.dc.html', 'M3 4h12v11H3zM3 7h12M6 2v3m6-3v3', false],
+      ['UGC', 'Ugc.dc.html', 'M3 4h12v10H3zM7.5 7v4l3.5-2z', false],
+      ['Reports', 'Reports.dc.html', 'M3 15V3m0 12h12M6 12V9m3 3V6m3 6v-4', false],
+      ['More', 'Accounts.dc.html', 'M4 9h.01M9 9h.01M14 9h.01', false]
+    ].map(([label, href, icon, on]) => ({ label, href, icon, style: 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:' + (on ? '#1D1D1F' : '#5E6966') + (on ? ';box-shadow:inset 0 2px 0 #1D1D1F' : '') }));
+    return { scopes, week, sel, tx, nav };
+  }
+}
+</script>
+</body>
+</html>

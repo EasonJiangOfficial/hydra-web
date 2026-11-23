@@ -1,0 +1,9 @@
+{
+  "display_message": null,
+  "documentation_url": "https://plaid.com/docs/errors/#no_liability_accounts",
+  "error_code": "NO_LIABILITY_ACCOUNTS",
+  "error_message": "the provided item has no liability accounts",
+  "error_type": "ITEM_ERROR",
+  "request_id": "HNTDNaB3cD4eF5gH6",
+  "suggested_action": null
+}

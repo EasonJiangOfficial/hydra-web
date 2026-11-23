@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "cwd": ".",
+  "argv": ["pnpm", "gate"],
+  "parallelArgv": ["pnpm", "gate"],
+  "inputs": [
+    ".claude/test-gate.json",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "tsconfig.json",
+    "next.config.ts",
+    "eslint.config.mjs",
+    "vitest.config.mts",
+    "vitest.setup.ts",
+    "playwright.config.ts",
+    "components.json",
+    "src/**",
+    "public/**",
+    "supabase/**",
+    "scripts/**",
+    "e2e/**"
+  ]
+}
