@@ -847,6 +847,9 @@ export class AgentController {
         this.sync();
       }
     } else if (status === "listening") {
+      // Hydra Desktop build 4 (BRIDGE.md listen): its own tap map. During a take it sends what was heard, otherwise
+      // it opens one with the listen chime. An older desktop has no listen: the tap turns it off, as before.
+      if (this.bridge?.listen) return this.bridge.listen();
       if (typedOnly) {
         // Voice failed: try it again, unless it failed the same way FATAL_REPEATS times (then it types).
         if (this.d.supported() && !this.bridge && this.fatal.n < FATAL_REPEATS) this.wake();
@@ -937,12 +940,18 @@ export class AgentController {
     this.patch({ paused: false, confirm: null, thread: this.state.thread.filter(hasContent) });
   }
 
-  /** The orb leaves this window and floats on the Mac (v2+), or comes back. */
-  detach = () => {
+  /**
+   * The orb leaves this window and floats on the Mac (v2+), or comes back. `drag` (a press-and-drag on the web orb, the
+   * pointer's screen point in points) brings the desktop orb out under the cursor (build 4); an older desktop ignores
+   * it and docks the orb as a plain detach. Anything else passed in (a click event) is a plain detach.
+   */
+  detach = (drag?: unknown) => {
     if (!this.bridge || !this.state.can.detach) return;
     this.hold("detached", true); // before the call: a desktop may echo it at once
     this.patch({ detached: true });
-    this.bridge.detach?.();
+    const d = isObj(drag) && drag.dragging === true && Number.isFinite(drag.x) && Number.isFinite(drag.y) ? { x: Math.round(drag.x as number), y: Math.round(drag.y as number), dragging: true as const } : null;
+    if (d) this.bridge.detach?.(d);
+    else this.bridge.detach?.();
   };
   attach = () => {
     if (!this.bridge || !this.state.can.detach) return;

@@ -38,7 +38,7 @@ const { sha256, KEY_PREFIX } = await import("@/lib/agent/devices");
 const URL_ = "https://hydra.example/api/agent/models/keys";
 const send = (method: string, body?: unknown, headers: Record<string, string> = {}) =>
   new Request(URL_, { method, headers: { "content-type": "application/json", ...headers }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
-const XAI_KEY = "xai-TESTKEY0123456789abcdef4f2a";
+const XAI_KEY = "xai-test-key-demo-4f2a";
 const DEVICE = `${KEY_PREFIX}mac-key`;
 const DEVICE_ID = "00000000-0000-4000-8000-0000000000d1";
 const deviceGet = (provider: string, headers: Record<string, string> = { authorization: `Bearer ${DEVICE}` }) =>

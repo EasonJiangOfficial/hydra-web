@@ -520,6 +520,48 @@ describe("Hydra Desktop bridge", () => {
     }
   });
 
+  it("build 4: the orb tap map on the desktop: asleep wakes, listening is its listen, speaking stops the voice", () => {
+    const { bridge, calls, push } = fakeBridge(3, { listen: true });
+    const { ctl } = setup();
+    ctl.init(bridge);
+    ctl.tapOrb(); // asleep: wake
+    push({ state: "Listening" });
+    ctl.tapOrb(); // awake: the desktop's listen (sends what it heard, or opens a take with the chime)
+    push({ state: "Speaking" });
+    ctl.tapOrb(); // talking: the voice stops
+    expect(calls).toEqual(["wake", "listen", "stop"]);
+    // An older desktop (no listen) keeps its tap: listening turns it off.
+    const old = fakeBridge(3, { snap: { state: "Listening" } });
+    const o = setup();
+    o.ctl.init(old.bridge);
+    o.ctl.tapOrb();
+    expect(old.calls).toEqual(["sleep"]);
+  });
+
+  it("drag to detach: the pointer's screen point goes to the desktop; a click or a bad point is a plain detach", () => {
+    const { bridge, calls } = fakeBridge(3, { listen: true });
+    const { ctl } = setup();
+    ctl.init(bridge);
+    ctl.detach({ x: 812.4, y: 40.6, dragging: true });
+    expect(calls).toEqual(["detach:812,41"]);
+    expect(ctl.getSnapshot().detached).toBe(true);
+    // The Detach button passes its click event: never read as a drag.
+    for (const arg of [{ x: 5, y: 6, clientX: 5 }, { x: Number.NaN, y: 1, dragging: true }, undefined]) {
+      const b = fakeBridge(3);
+      const d = setup();
+      d.ctl.init(b.bridge);
+      d.ctl.detach(arg);
+      expect(b.calls).toEqual(["detach"]);
+    }
+    // A desktop that cannot detach (v1): a drag does nothing.
+    const v1 = fakeBridge(1, { snap: { state: "Listening" } });
+    const d1 = setup();
+    d1.ctl.init(v1.bridge);
+    d1.ctl.detach({ x: 1, y: 2, dragging: true });
+    expect(v1.calls).toEqual([]);
+    expect(d1.ctl.getSnapshot().detached).toBe(false);
+  });
+
   it("v2: detach and attach go to the desktop and the card follows the pushed flag", () => {
     const { bridge, calls, push } = fakeBridge(2);
     const { ctl } = setup();

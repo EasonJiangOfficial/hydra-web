@@ -255,43 +255,48 @@ test("it sleeps after 5 minutes without talking", async ({ page }) => {
   await expect(status(page)).toHaveText("Asleep");
 });
 
-/** The orb's outline: the outermost inked pixel per angle sector, as its mean and its spread over the mean. */
-const outline = (page: Page, root: string) =>
+/** The orb's ink: every pixel's alpha (0..255), row by row. */
+const alphas = (page: Page, root: string) =>
   page.locator(`${root} canvas`).first().evaluate((c: HTMLCanvasElement) => {
     const d = c.getContext("2d")!.getImageData(0, 0, c.width, c.height).data;
-    const sectors = new Array(36).fill(0);
-    for (let y = 0; y < c.height; y++)
-      for (let x = 0; x < c.width; x++) {
-        if (d[(y * c.width + x) * 4 + 3] < 60) continue;
-        const dx = x - c.width / 2;
-        const dy = y - c.height / 2;
-        const s = Math.floor(((Math.atan2(dy, dx) + Math.PI) / (2 * Math.PI)) * 36) % 36;
-        sectors[s] = Math.max(sectors[s], Math.hypot(dx, dy));
-      }
-    const mean = sectors.reduce((a, b) => a + b, 0) / 36;
-    return { mean, spread: Math.sqrt(sectors.reduce((a, b) => a + (b - mean) ** 2, 0) / 36) / mean };
+    const a: number[] = [];
+    for (let i = 3; i < d.length; i += 4) a.push(d[i]);
+    return a;
   });
+/** The share of pixels whose alpha moved by more than 2 between two frames. */
+const moved = (a: number[], b: number[]) => a.filter((v, i) => Math.abs(v - b[i]) > 2).length / a.length;
+/** All the ink in a frame (alpha summed). */
+const totalInk = (a: number[]) => a.reduce((s, v) => s + v, 0);
 
-test("reduced motion: no turn, ripple or spikes, only a gentle pulse; otherwise a speaking orb moves", async ({ page }) => {
-  const root = '[data-testid="demo-ink-speaking"]';
+test("reduced motion: the orb never moves, each look shows only as a gentle opacity; otherwise a speaking orb moves", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await open(page);
-  // The asleep orb holds one still frame.
-  const asleep = '[data-testid="demo-ink-asleep"]';
-  const z = await pixels(page, asleep);
-  await page.waitForTimeout(400);
-  expect(await pixels(page, asleep)).toBe(z);
-  // Speaking: a round sphere that only swells a few percent with the voice.
-  const shapes = [];
-  for (let i = 0; i < 6; i++) {
-    shapes.push(await outline(page, root));
-    await page.waitForTimeout(120);
+  await page.waitForTimeout(400); // each still frame's 250 ms alpha ease
+  // Every look holds one still frame: two frames 500 ms apart are the same pixels (the voices are playing).
+  const looks = ["asleep", "thinking", "listening", "speaking"] as const;
+  const ink: Record<string, number> = {};
+  const frames: Record<string, number[]> = {};
+  for (const s of looks) {
+    const root = `[data-testid="demo-ink-${s}"]`;
+    const a = await alphas(page, root);
+    await page.waitForTimeout(500);
+    const b = await alphas(page, root);
+    expect(moved(a, b), `${s} moved between frames`).toBeLessThan(0.001);
+    expect(await inked(page, root)).toBeGreaterThan(40);
+    ink[s] = totalInk(b);
+    frames[s] = b;
   }
-  for (const s of shapes) expect(s.spread).toBeLessThan(0.03);
-  const means = shapes.map((s) => s.mean);
-  expect(Math.max(...means) / Math.min(...means)).toBeLessThan(1.08);
-  expect(await inked(page, root)).toBeGreaterThan(40);
+  console.log(`[agent] reduced-motion ink vs speaking ${looks.map((s) => `${s} ${(ink[s] / ink.speaking).toFixed(3)}`).join(", ")}`);
+  // The looks are told apart by opacity alone: asleep faintest, then pending, listening, speaking, each at least 6 %
+  // more ink than the one before, but gently (asleep keeps at least 40 % of speaking's ink) ...
+  for (let i = 1; i < looks.length; i++) expect(ink[looks[i]] / ink[looks[i - 1]], `${looks[i - 1]} < ${looks[i]}`).toBeGreaterThan(1.06);
+  expect(ink.asleep / ink.speaking).toBeGreaterThan(0.4);
+  // ... on the same dust: every pixel inked asleep is inked speaking too (no shape tells them apart).
+  const asleepPx = frames.asleep.filter((v) => v > 0).length;
+  const shared = frames.asleep.filter((v, i) => v > 0 && frames.speaking[i] > 0).length;
+  expect(shared / asleepPx).toBeGreaterThan(0.98);
 
+  const root = '[data-testid="demo-ink-speaking"]';
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.reload();
   await expect(page.getByTestId("demo-ink-speaking")).toBeVisible();

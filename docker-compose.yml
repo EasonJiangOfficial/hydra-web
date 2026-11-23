@@ -1,0 +1,53 @@
+# Local check: docker compose config
+# Secrets are read from .env at run time. The file is optional here so `docker compose config` works with the defaults.
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-http://127.0.0.1:54321}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-sb_publishable_example}
+    env_file:
+      - path: .env
+        required: false
+    expose:
+      - "3000"
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      HYDRA_DOMAIN: ${HYDRA_DOMAIN:-your-hydra.example.com}
+      ACME_EMAIL: ${ACME_EMAIL:-you@example.com}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+  cron:
+    image: node:22-bookworm-slim
+    depends_on:
+      - app
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      HYDRA_CRON_ORIGIN: http://app:3000
+    volumes:
+      - ./scripts/cron/run.mjs:/cron/run.mjs:ro
+      - ./scripts/cron/match.mjs:/cron/match.mjs:ro
+      - ./vercel.json:/cron/vercel.json:ro
+    working_dir: /cron
+    command: ["node", "/cron/run.mjs"]
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

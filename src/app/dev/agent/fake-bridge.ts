@@ -2,7 +2,8 @@
  * A stand-in for Hydra Desktop's `window.hydraDesktop` (fixture, unit tests and e2e). It copies the real bridge's
  * mechanics (HydraDesktop showcase/tauri/src-tauri/src/hydra.rs): a snapshot merged by each push, subscribers called at
  * once and on every push. `version` picks the shape: 1 (state, levels, wake, sleep), 2 (+ detach/attach),
- * 3 (+ voice controls, reply/heard/ui, setup). Every call is recorded in `calls`.
+ * 3 (+ voice controls, reply/heard/ui, setup); `listen` adds build 4's listen() and dragged detach. Every call is
+ * recorded in `calls`.
  */
 import type { BridgeResult, DesktopSetup, DesktopSnapshot, HydraDesktopBridge, Perm, PermKind } from "@/components/agent/types";
 
@@ -17,6 +18,8 @@ export type FakeOptions = {
   deny?: PermKind[];
   /** Delay of each setup action, in ms. */
   delayMs?: number;
+  /** Build 4: listen() (an orb tap) and a dragged detach. */
+  listen?: boolean;
 };
 
 export const SETUP_DONE: DesktopSetup = {
@@ -61,7 +64,7 @@ export function fakeBridge(version: 1 | 2 | 3, o: FakeOptions = {}) {
     get detached() {
       return snap.detached === true;
     },
-    detach: () => (calls.push("detach"), push({ detached: true })),
+    detach: (drag?: { x: number; y: number; dragging: true }) => (calls.push(drag?.dragging ? `detach:${drag.x},${drag.y}` : "detach"), push({ detached: true })),
     attach: () => (calls.push("attach"), push({ detached: false })),
   };
   const v3 = {
@@ -102,6 +105,7 @@ export function fakeBridge(version: 1 | 2 | 3, o: FakeOptions = {}) {
       ...Object.getOwnPropertyDescriptors(v1),
       ...(version >= 2 ? Object.getOwnPropertyDescriptors(v2) : {}),
       ...(version >= 3 ? Object.getOwnPropertyDescriptors(v3) : {}),
+      ...(o.listen ? Object.getOwnPropertyDescriptors({ listen: () => void calls.push("listen") }) : {}),
     },
   ) as HydraDesktopBridge;
   return { bridge, push, calls, setup };
@@ -124,6 +128,7 @@ export const PRESETS: Record<string, () => FakeBridge> = {
       },
     }),
   detached: () => fakeBridge(3, { snap: { detached: true } }),
+  build4: () => fakeBridge(3, { listen: true, snap: { state: "Listening" } }),
   "setup-pairing": () => fakeBridge(3, { hangPair: true, setup: { paired: false, claude: "signed_out", permissions: { mic: "not_determined", accessibility: "not_determined", screen: "not_determined" } } }),
   "setup-pair-failed": () => fakeBridge(3, { failPair: true, setup: { paired: false, claude: "signed_out", permissions: { mic: "not_determined", accessibility: "not_determined", screen: "not_determined" } } }),
   "setup-claude": () => fakeBridge(3, { delayMs: 300, setup: { claude: "signed_out", permissions: { mic: "not_determined", accessibility: "not_determined", screen: "not_determined" } } }),

@@ -113,8 +113,8 @@ test.describe("/dev/ugc", () => {
     await panel.getByRole("button", { name: "Add a video" }).click();
     const form = panel.getByRole("form", { name: "Add a video" });
     await expect(form).toBeVisible();
-    await form.getByLabel("Post link").fill("https://www.tiktok.com/@eason.ugc/video/7777777777");
-    await form.getByLabel("Account").fill("@eason.ugc");
+    await form.getByLabel("Post link").fill("https://www.tiktok.com/@alex.ugc/video/7777777777");
+    await form.getByLabel("Account").fill("@alex.ugc");
     await form.getByLabel("Title").fill("A brand new video");
     await form.getByRole("button", { name: "Add video" }).click();
     await expect(form.getByRole("status")).toHaveText("Added");
@@ -122,7 +122,7 @@ test.describe("/dev/ugc", () => {
     await expect(row).toBeVisible();
 
     // The same URL again is one post, not two (upsert on the normalized URL).
-    await form.getByLabel("Post link").fill("https://tiktok.com/@eason.ugc/video/7777777777/?utm=x");
+    await form.getByLabel("Post link").fill("https://tiktok.com/@alex.ugc/video/7777777777/?utm=x");
     await form.getByRole("button", { name: "Add video" }).click();
     await expect(panel.locator("[data-day-video]").filter({ hasText: "A brand new video" })).toHaveCount(1);
 

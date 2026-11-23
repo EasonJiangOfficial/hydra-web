@@ -3,12 +3,14 @@
  *   node --experimental-strip-types scripts/bootstrap-owner.mts
  * (Node 22.18+ / 23.6+ strip types by default; the flag keeps older 22.x working.)
  * Reads NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SECRET_KEY, HYDRA_OWNER_EMAIL from the environment,
- * or from .env.local when present. Never prints keys.
+ * or from .env.local and then .env when present. A value already set in the environment wins.
+ * Never prints keys.
  */
 import { existsSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 
 if (existsSync(".env.local")) process.loadEnvFile(".env.local");
+if (existsSync(".env")) process.loadEnvFile(".env");
 
 function need(name: string): string {
   const value = process.env[name]?.trim();

@@ -90,14 +90,22 @@ function AttachRow() {
 /** What a tap on the orb does where it sits: its tap map (asleep wakes, listening sleeps, speaking interrupts), or a menu. */
 export type OrbTap = { label: string; onTap: () => void; expanded?: boolean };
 
+/** A press that moves this far (CSS px) is a drag, not a tap (Hydra Desktop BRIDGE.md: about 6 px). */
+export const DRAG_PX = 6;
+
 /**
- * The orb as a button. By default its tap map: asleep wakes, listening turns off, speaking stops the speech and listens
- * (owner: "if I tap on the visualiser when it's listening it should shut off"). In the panel header it opens Hydra's
- * options instead (`menu`), except while Hydra speaks or listens: then a tap still interrupts or turns it off, the only
- * way on an iPhone with the sheet open (the name beside it always opens the options).
+ * The orb as a button. By default its tap map: asleep wakes, listening turns off (inside Hydra Desktop build 4: its
+ * listen, which sends what was heard or opens a take), speaking stops the speech and listens (owner: "if I tap on the
+ * visualiser when it's listening it should shut off"). In the panel header it opens Hydra's options instead (`menu`),
+ * except while Hydra speaks or listens: then a tap still interrupts or turns it off, the only way on an iPhone with the
+ * sheet open (the name beside it always opens the options). Inside Hydra Desktop a press dragged past DRAG_PX detaches
+ * the orb (owner: "I should be able to drag the orb and that automatically detaches it"): the desktop orb comes out
+ * under the cursor and rides it; this one goes away. A click that never moved that far is still a tap.
  */
 export function OrbButton({ className, tone = "ink", menu: menuTap }: { className?: string; tone?: "ink" | "white"; menu?: OrbTap }) {
   const { ctl, state } = useAgent();
+  const press = useRef<{ x: number; y: number; id: number; moved: boolean } | null>(null);
+  const canDrag = state.desktop && state.can.detach;
   const menu = state.status === "speaking" || state.status === "listening" ? undefined : menuTap;
   const label = menu?.label ?? (state.status === "asleep" ? "Wake Hydra" : state.status === "speaking" ? "Interrupt Hydra" : "Talk to Hydra");
   return (
@@ -110,7 +118,24 @@ export function OrbButton({ className, tone = "ink", menu: menuTap }: { classNam
       data-status={state.status}
       data-woke={state.wokeAt ?? undefined}
       data-orb-menu={menu ? "" : undefined}
-      onClick={menu?.onTap ?? ctl.tapOrb}
+      onPointerDown={(e) => {
+        press.current = null;
+        if (!canDrag || e.button !== 0) return;
+        press.current = { x: e.clientX, y: e.clientY, id: e.pointerId, moved: false };
+        // Keep the moves when the pointer leaves the orb mid-drag.
+        e.currentTarget.setPointerCapture?.(e.pointerId);
+      }}
+      onPointerMove={(e) => {
+        const p = press.current;
+        if (!p || p.moved || p.id !== e.pointerId || Math.hypot(e.clientX - p.x, e.clientY - p.y) < DRAG_PX) return;
+        p.moved = true;
+        ctl.detach({ x: e.screenX, y: e.screenY, dragging: true });
+      }}
+      onClick={() => {
+        const dragged = press.current?.moved;
+        press.current = null;
+        if (!dragged) (menu?.onTap ?? ctl.tapOrb)();
+      }}
       className={cn("block flex-none rounded-full outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink", className)}
     >
       <Orb status={state.status} getLevel={ctl.level} getBands={ctl.bands} tone={tone} wokeAt={state.wokeAt} />

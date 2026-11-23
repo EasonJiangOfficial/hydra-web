@@ -119,7 +119,10 @@ export type HydraDesktopBridge = {
   sleep(): void;
   /* v2 */
   readonly detached?: boolean;
-  detach?(): void;
+  /** Build 4: `drag` brings the desktop orb out under the cursor (screen point, points); older desktops ignore it. */
+  detach?(drag?: { x: number; y: number; dragging: true }): void;
+  /** Build 4: an orb tap. Asleep it wakes; during a take it sends what was heard; otherwise it opens a take. */
+  listen?(): void;
   attach?(): void;
   /* v3: voice controls */
   stop?(): void;

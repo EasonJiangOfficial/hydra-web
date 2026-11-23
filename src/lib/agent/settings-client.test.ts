@@ -110,7 +110,7 @@ describe("models (0225)", () => {
     expect(await keys.list()).toEqual({ ok: true, data: [{ provider: "xai", hint: "4f2a", updatedAt: "2026-11-22T00:00:00Z" }] });
     for (const bad of ["short", "xai-has a space in it 000000", "x".repeat(401)]) expect((await keys.connect("xai", bad)).ok).toBe(false);
     expect(calls).toHaveLength(1);
-    const key = "xai-0123456789abcdef4f2a";
+    const key = "xai-test-key-demo-4f2a";
     expect(await keys.connect("xai", `  ${key} `)).toEqual({ ok: true, data: { provider: "xai", hint: "4f2a", updatedAt: "2026-11-22T00:00:00Z" } });
     expect(calls.at(-1)).toEqual({ method: "PUT", body: { provider: "xai", key } });
     expect(await keys.remove("xai")).toEqual({ ok: true, data: { model: "claude-opus-5-5", effortLive: "xhigh" } });

@@ -127,7 +127,7 @@ body{margin:0}
           <div class="g" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
             <label class="col" style="gap: 4px"><span class="hint">Bank deposit name contains</span><input class="in" value="WORDWISE"></label>
             <label class="col" style="gap: 4px"><span class="hint">Pays within</span><input class="in tn" value="30 days"></label>
-            <label class="col" style="gap: 4px"><span class="hint">Accounts on this deal</span><input class="in" value="@eason.ugc, @eason.tech"></label>
+            <label class="col" style="gap: 4px"><span class="hint">Accounts on this deal</span><input class="in" value="@alex.ugc, @alex.tech"></label>
           </div>
           <div class="wf">A deposit that matches this rule is linked to the deal, so "Owed to you" goes down. Rate changes apply to new videos only. Old videos keep the rate they were posted under.</div>
         </section>
@@ -170,13 +170,13 @@ class Component extends DCLogic {
     const bars = counts.map((c, i) => ({ tip: 'Nov ' + (i + 1) + ': $' + c * avgBase, style: 'flex:1;border-radius:3px 3px 0 0;background:' + (c >= target ? '#1D1D1F' : '#D2D2D7') + ';height:' + Math.max(3, c * 26) + 'px' }));
     const cfg = { Wordwise: { base: 25, cpm: 0, tiers: [[100000, 100], [500000, 400]] }, Brightleaf: { base: 40, cpm: 2, tiers: [] }, Canvasly: { base: 35, cpm: 0, tiers: [] } };
     const raw = [
-      ['3 apps for when you are bored', '@eason.ugc · TikTok', 'Wordwise', 'Nov 20', 184200],
-      ['Worst classes ranked', '@eason.ugc · TikTok', 'Wordwise', 'Nov 19', 612400],
-      ['After school procrastinator', '@eason.tech · Reels', 'Brightleaf', 'Nov 19', 48100],
-      ['Morning peak routine', '@eason.tech · Shorts', 'Brightleaf', 'Nov 18', 9300],
-      ['Watch this before finals', '@eason.ugc · TikTok', 'Wordwise', 'Nov 18', 22800],
-      ['Roblox walkthrough', '@eason.ugc · Reels', 'Canvasly', 'Nov 17', 71500],
-      ['GTA 6 apps', '@eason.ugc · TikTok', 'Wordwise', 'Nov 17', 3900]
+      ['3 apps for when you are bored', '@alex.ugc · TikTok', 'Wordwise', 'Nov 20', 184200],
+      ['Worst classes ranked', '@alex.ugc · TikTok', 'Wordwise', 'Nov 19', 612400],
+      ['After school procrastinator', '@alex.tech · Reels', 'Brightleaf', 'Nov 19', 48100],
+      ['Morning peak routine', '@alex.tech · Shorts', 'Brightleaf', 'Nov 18', 9300],
+      ['Watch this before finals', '@alex.ugc · TikTok', 'Wordwise', 'Nov 18', 22800],
+      ['Roblox walkthrough', '@alex.ugc · Reels', 'Canvasly', 'Nov 17', 71500],
+      ['GTA 6 apps', '@alex.ugc · TikTok', 'Wordwise', 'Nov 17', 3900]
     ];
     const excluded = st.excluded || { 6: true };
     let counted = 0, nEx = 0;

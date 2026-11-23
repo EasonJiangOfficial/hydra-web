@@ -1,6 +1,6 @@
 import type { DesktopSnapshot, HydraDesktopBridge, Woke } from "./types";
 
-const SYNC = ["detach", "attach", "stop", "pause", "resume", "setMuted"] as const;
+const SYNC = ["detach", "attach", "listen", "stop", "pause", "resume", "setMuted"] as const;
 const ASYNC = ["setup", "pair", "signInClaude", "requestPermission", "unpair"] as const;
 
 /**

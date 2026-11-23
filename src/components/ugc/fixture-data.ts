@@ -222,12 +222,12 @@ export function fixtureRaw(): UgcRaw & WithEngagement {
   const deals = fixtureDeals();
   const dealById = new Map(deals.map((d) => [d.id, d]));
   const accounts: AccountRaw[] = [
-    { id: fid(201), deal_id: DEAL_WORDWISE, platform: "TIKTOK", handle: "eason.ugc" },
-    { id: fid(202), deal_id: DEAL_WORDWISE, platform: "INSTAGRAM", handle: "eason.tech" },
-    { id: fid(203), deal_id: DEAL_BRIGHTLEAF, platform: "INSTAGRAM", handle: "eason.tech" },
-    { id: fid(204), deal_id: DEAL_BRIGHTLEAF, platform: "YOUTUBE", handle: "eason.tech" },
-    { id: fid(205), deal_id: DEAL_CANVASLY, platform: "TIKTOK", handle: "eason.ugc" },
-    { id: fid(206), deal_id: DEAL_STUDYFETCH, platform: "TIKTOK", handle: "eason.ugc" },
+    { id: fid(201), deal_id: DEAL_WORDWISE, platform: "TIKTOK", handle: "alex.ugc" },
+    { id: fid(202), deal_id: DEAL_WORDWISE, platform: "INSTAGRAM", handle: "alex.tech" },
+    { id: fid(203), deal_id: DEAL_BRIGHTLEAF, platform: "INSTAGRAM", handle: "alex.tech" },
+    { id: fid(204), deal_id: DEAL_BRIGHTLEAF, platform: "YOUTUBE", handle: "alex.tech" },
+    { id: fid(205), deal_id: DEAL_CANVASLY, platform: "TIKTOK", handle: "alex.ugc" },
+    { id: fid(206), deal_id: DEAL_STUDYFETCH, platform: "TIKTOK", handle: "alex.ugc" },
   ];
 
   const posts: PostRaw[] = [];

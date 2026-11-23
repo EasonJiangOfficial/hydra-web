@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "e2e": "playwright test",
     "gate": "pnpm typecheck && pnpm lint && pnpm test",
-    "verify": "bash scripts/verify-local.sh"
+    "verify": "bash scripts/verify-local.sh",
+    "hydra:setup": "node --experimental-strip-types scripts/setup/cli.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.12.0",

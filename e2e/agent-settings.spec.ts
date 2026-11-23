@@ -7,7 +7,7 @@ import { expect, test, type Page, type TestInfo } from "@playwright/test";
  *   tap map (asleep wakes, listening turns off);
  * - words said or typed while Hydra thinks are added to that turn (POST /api/agent/turn/append), never a new turn;
  *   the sleep word while it thinks cancels and sleeps;
- * - the orb's spectrum: speaking spikes unevenly by angle, listening in a quiet room stays calm.
+ * - the orb's voice: speaking erupts in one patch of swollen dots, listening in a quiet room stays calm.
  * Owner's words: "the sleep word should be moved into some settings thing and hidden"; "dont cancel but add onto the
  * prompt"; "the visualizer needs to be more unique with unique spikes depending on frequencies".
  */
@@ -195,46 +195,40 @@ test("words while Hydra thinks are added to the turn (no new turn); the sleep wo
   expect(await page.evaluate(() => (window as unknown as Win).__added?.length)).toBe(2);
 });
 
-/** How uneven the orb's outline is: the outermost inked pixel per angle sector, as spread over mean. */
-async function outline(page: Page) {
+/**
+ * The orb's swollen dots: pixels at full ink (alpha 240 and up). The calm dust's dots are too small to cover a pixel
+ * fully, so a quiet orb has almost none; the voice's patch swells its dots up to twice their size, and each swollen
+ * dot has a solid core.
+ */
+async function swollen(page: Page) {
   return orb(page).locator("canvas").evaluate((c: HTMLCanvasElement) => {
-    const g = c.getContext("2d")!;
-    const { width: w, height: h } = c;
-    const d = g.getImageData(0, 0, w, h).data;
-    const sectors = new Array(36).fill(0);
-    for (let y = 0; y < h; y++)
-      for (let x = 0; x < w; x++) {
-        if (d[(y * w + x) * 4 + 3] < 60) continue;
-        const dx = x - w / 2;
-        const dy = y - h / 2;
-        const s = Math.floor(((Math.atan2(dy, dx) + Math.PI) / (2 * Math.PI)) * 36) % 36;
-        sectors[s] = Math.max(sectors[s], Math.hypot(dx, dy));
-      }
-    const mean = sectors.reduce((a, b) => a + b, 0) / sectors.length;
-    const sd = Math.sqrt(sectors.reduce((a, b) => a + (b - mean) ** 2, 0) / sectors.length);
-    return sd / mean;
+    const d = c.getContext("2d")!.getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 3; i < d.length; i += 4) if (d[i] >= 240) n++;
+    return n;
   });
 }
 
-test("the orb's spectrum: speaking spikes by angle; listening in a quiet room stays calm", async ({ page }, info) => {
+test("the orb's voice: speaking erupts in one patch; listening in a quiet room stays calm", async ({ page }, info) => {
   test.setTimeout(60_000);
   await open(page);
   await orb(page).click();
   await expect.poll(() => recOn(page)).toBe(true);
   await page.waitForTimeout(400);
-  const calm = await outline(page);
+  const calm = await swollen(page);
   await orb(page).screenshot({ path: shot(info, "05-orb-listening-calm") });
 
   expect(await page.evaluate(() => (window as unknown as Win).__say("what did I earn this week"))).toBe(true);
   await expect(orb(page)).toHaveAttribute("data-status", "speaking", { timeout: 15_000 });
   await page.waitForTimeout(500);
-  const spikes: number[] = [];
+  const talk: number[] = [];
   for (let i = 0; i < 6; i++) {
-    spikes.push(await outline(page));
+    talk.push(await swollen(page));
     await page.waitForTimeout(90);
   }
-  await orb(page).screenshot({ path: shot(info, "06-orb-speaking-spiky") });
+  await orb(page).screenshot({ path: shot(info, "06-orb-speaking-erupts") });
   await page.screenshot({ path: shot(info, "07-speaking-page") });
-  console.log(`[agent-settings] ${info.project.name}: outline spread calm ${calm.toFixed(3)}, speaking ${spikes.map((s) => s.toFixed(3)).join(" ")}`);
-  expect(Math.max(...spikes)).toBeGreaterThan(Math.max(0.04, calm * 2.5));
+  console.log(`[agent-settings] ${info.project.name}: swollen px calm ${calm}, speaking ${talk.join(" ")}`);
+  // Speaking erupts: at least three times the calm orb's swollen pixels, and never fewer than 8.
+  expect(Math.max(...talk)).toBeGreaterThan(Math.max(8, 3 * calm));
 });

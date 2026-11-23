@@ -147,3 +147,15 @@ describe("wokeOf (the snapshot's woke, newer desktops)", () => {
     }
   });
 });
+
+describe("build 4: listen and a dragged detach", () => {
+  it("passes listen through when the desktop has it, and the drag point to detach", () => {
+    const calls: unknown[][] = [];
+    const raw = { subscribe: () => () => {}, snapshot: () => ({ state: "Listening" }), detach: (...a: unknown[]) => calls.push(["detach", ...a]), listen: () => calls.push(["listen"]) };
+    const b = desktopBridge(raw)!;
+    b.listen?.();
+    b.detach?.({ x: 10, y: 20, dragging: true });
+    expect(calls).toEqual([["listen"], ["detach", { x: 10, y: 20, dragging: true }]]);
+    expect(desktopBridge({ subscribe: () => () => {} })!.listen).toBeUndefined();
+  });
+});
